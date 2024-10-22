@@ -1,0 +1,43 @@
+.blueprint {
+  width: 400px; /* Adjust as needed */
+  height: 400px; /* Adjust as needed */
+  position: relative;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.blueprint::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.1) 1px,
+      transparent 1px
+    ),
+    linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  /* background-size: 20px 20px; */
+  background-size: 2vmin 2vmin;
+
+  z-index: 1;
+}
+
+.blueprint::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.2) 1px,
+      transparent 1px
+    ),
+    linear-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px);
+  /* background-size: 100px 100px; */
+  background-size: 10vmin 10vmin;
+  z-index: 2;
+}
