@@ -1,6 +1,6 @@
-import { JSONFilePreset } from 'lowdb/node';
-import { DbData } from '~/types/db';
+import loki from 'lokijs';
+import { ReactionTimeEntry } from '~/types/db';
 
-export const db = await JSONFilePreset<DbData>('db.json', {
-  reactionTimes: []
-});
+export const db = new loki('db.db');
+export const dbReactionTimes =
+  db.addCollection<ReactionTimeEntry>('reactionTimes');

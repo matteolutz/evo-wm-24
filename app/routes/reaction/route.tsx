@@ -1,33 +1,37 @@
-import { useLoaderData, useRevalidator } from '@remix-run/react';
+import { json, useLoaderData, useRevalidator } from '@remix-run/react';
 import { useEffect } from 'react';
 import { useEventSource } from 'remix-utils/sse/react';
-import { db } from '~/services/db.server';
+import { dbReactionTimes } from '~/services/db.server';
 import { ReactionServerClientMessage } from '~/types/sse';
 
 export const loader = async () => {
-  return db.data.reactionTimes.sort((a, b) => a.time - b.time);
+  return json(dbReactionTimes.chain().find().simplesort('time').data());
 };
 
 const Reaction = () => {
   const data = useLoaderData<typeof loader>();
 
-  // const revalidator = useRevalidator();
-  /*const serverMessage = useEventSource(
-    '/sse/reaction'
-  ) as ReactionServerClientMessage | null;*/
+  const { revalidate } = useRevalidator();
 
-  /*useEffect(() => {
+  const serverMessage = useEventSource(
+    '/sse/reaction'
+  ) as ReactionServerClientMessage | null;
+
+  useEffect(() => {
     if (!serverMessage) return;
 
-    switch (serverMessage) {
+    const { type } = JSON.parse(serverMessage);
+
+    switch (type) {
       case 'update-leaderboard':
-        // revalidator.revalidate();
+        revalidate();
         break;
       default:
         console.error('Unknown server message', serverMessage);
         break;
     }
-    }, [serverMessage]);*/
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [serverMessage]);
 
   return (
     <div className="w-screen h-screen">

@@ -1,7 +1,6 @@
 import { vitePlugin as remix } from '@remix-run/dev';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
-import esbuild from 'esbuild';
 
 declare module '@remix-run/node' {
   interface Future {
@@ -18,25 +17,6 @@ export default defineConfig({
         v3_throwAbortReason: true,
         v3_singleFetch: true,
         v3_lazyRouteDiscovery: true
-      },
-      serverBuildFile: 'remix.js',
-      buildEnd: async () => {
-        await esbuild
-          .build({
-            alias: { '~': './app' },
-            outfile: 'build/server/index.js',
-            entryPoints: ['server/index.ts'],
-            external: ['./build/server/*'],
-            platform: 'node',
-            format: 'esm',
-            packages: 'external',
-            bundle: true,
-            logLevel: 'info'
-          })
-          .catch((error: unknown) => {
-            console.error('Error building server:', error);
-            process.exit(1);
-          });
       }
     }),
     tsconfigPaths()

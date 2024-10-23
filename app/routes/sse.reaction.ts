@@ -6,7 +6,7 @@ import { reactionEmitter } from '~/services/emitter.server';
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   return eventStream(request.signal, (send) => {
     const handleReactionMessage = (message: ReactionServerClientMessage) => {
-      send({ data: message });
+      send({ data: JSON.stringify({ type: message, timestamp: Date.now() }) });
     };
 
     reactionEmitter.on('message', handleReactionMessage);

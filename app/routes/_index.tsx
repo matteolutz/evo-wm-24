@@ -1,18 +1,11 @@
 import type { MetaFunction } from '@remix-run/node';
 import { Link } from '@remix-run/react';
-import { useEffect } from 'react';
-import { wsConnect } from '~/ws.client';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'evolut1on' }];
 };
 
 export default function Index() {
-  useEffect(() => {
-    const conn = wsConnect();
-    console.log(conn);
-  }, []);
-
   return (
     <div className="w-screen h-screen">
       <div className="blueprint size-full bg-evo-orange">
