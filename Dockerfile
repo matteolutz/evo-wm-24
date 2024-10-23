@@ -30,7 +30,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules /app/node_modules
 
 ADD . .
-RUN npm run build
+RUN yarn build
 
 # Finally, build the production image with minimal footprint
 FROM base
@@ -45,6 +45,7 @@ COPY --from=build /app/build /app/build
 COPY --from=build /app/public /app/public
 ADD . .
 
-ENV PORT=3000
+ARG PORT
+ENV PORT $PORT
 
 CMD ["yarn", "start"]

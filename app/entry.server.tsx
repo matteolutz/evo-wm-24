@@ -11,8 +11,27 @@ import { createReadableStreamFromReadable } from '@remix-run/node';
 import { RemixServer } from '@remix-run/react';
 import { isbot } from 'isbot';
 import { renderToPipeableStream } from 'react-dom/server';
+import { reactionEmitter } from './services/emitter.server';
+import { ReactionServerClientMessage } from '~/types/sse';
+import { db } from './services/db.server';
 
 const ABORT_DELAY = 5_000;
+
+const randomString = (n: number) =>
+  [...Array(n)].map(() => Math.random().toString(36)[2]).join('');
+
+setInterval(async () => {
+  await db.update(({ reactionTimes }) =>
+    reactionTimes.push({
+      username: randomString(5),
+      time: Math.random()
+    })
+  );
+  reactionEmitter.emit(
+    'message',
+    'update-leaderboard' as ReactionServerClientMessage
+  );
+}, 2000);
 
 export default function handleRequest(
   request: Request,
