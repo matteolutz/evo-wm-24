@@ -54,6 +54,14 @@ module.exports = {
       }
     },
 
+    // Disable some react rules for shadcn components
+    {
+      files: ['app/components/ui/**.{ts,tsx}'],
+      rules: {
+        'react/prop-types': 'off'
+      }
+    },
+
     // Typescript
     {
       files: ['**/*.{ts,tsx}'],
