@@ -58,7 +58,8 @@ module.exports = {
     {
       files: ['app/components/ui/**.{ts,tsx}'],
       rules: {
-        'react/prop-types': 'off'
+        'react/prop-types': 'off',
+        'jsx-a11y/heading-has-content': 'off'
       }
     },
 

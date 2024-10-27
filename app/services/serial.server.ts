@@ -21,7 +21,7 @@ export type SerialReactionTestState =
     }
   | {
       state: 'finished';
-      reactionTime: number;
+      timeInMicros: number;
     }
   | {
       state: 'failed';
@@ -55,10 +55,10 @@ export class SerialReactionTest {
     });
   }
 
-  public sendBasicSerialPacket = (
+  public sendBasicSerialPacket(
     packetType: SerialPacketType,
     data: number
-  ): void => {
+  ): void {
     const buffer = new Uint8Array(5);
     buffer[0] = packetType;
     buffer[1] = data >> 24;
@@ -66,7 +66,7 @@ export class SerialReactionTest {
     buffer[3] = data >> 8;
     buffer[4] = data;
     this._port.write(buffer);
-  };
+  }
 
   public handlePacket(
     packetType: RemoteSerialPacketType,
@@ -76,28 +76,54 @@ export class SerialReactionTest {
       case RemoteSerialPacketType.Handshake:
         console.log('Handshake received', payload);
         this.sendBasicSerialPacket(SerialPacketType.Handshake, 0x0);
+        this._updateState({ state: 'idle' });
         break;
       case RemoteSerialPacketType.HandshakeAck:
         console.log('Handshake ack received', payload);
+        this._updateState({ state: 'idle' });
         break;
       case RemoteSerialPacketType.StartReaction:
-        console.log('Starting reactiont test...');
+        this._updateState({ state: 'running' });
         break;
       case RemoteSerialPacketType.EndReaction: {
-        const reactionTime =
+        const timeInMicros =
           (payload[0] << 24) |
           (payload[1] << 16) |
           (payload[2] << 8) |
           payload[3];
-        console.log(`Ending reaction test. Time was: ${reactionTime}ms`);
+        this._updateState({ state: 'finished', timeInMicros });
         break;
       }
       case RemoteSerialPacketType.EndReactionFailed:
-        console.log('Ending reaction test failed');
+        this._updateState({ state: 'failed' });
         break;
       default:
         console.log('Unknown packet type', packetType);
+        this._updateState({ state: 'idle' });
     }
+  }
+
+  private _updateState(newState: SerialReactionTestState): void {
+    if (newState.state === this._currentReactionTestState.state) return;
+    const oldState = this._currentReactionTestState;
+    this._currentReactionTestState = newState;
+
+    this._stateChangeListeners.forEach((listener) =>
+      listener(newState, oldState)
+    );
+  }
+
+  public get currentReactionTestState(): SerialReactionTestState {
+    return this._currentReactionTestState;
+  }
+
+  public addStateChangeListener(
+    listener: (
+      newState: SerialReactionTestState,
+      oldState: SerialReactionTestState
+    ) => void
+  ): void {
+    this._stateChangeListeners.push(listener);
   }
 }
 /*

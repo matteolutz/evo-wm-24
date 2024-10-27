@@ -12,17 +12,82 @@ import { RemixServer } from '@remix-run/react';
 import { isbot } from 'isbot';
 import { renderToPipeableStream } from 'react-dom/server';
 import { reactionEmitter } from './services/emitter.server';
-import { ReactionServerClientMessage } from '~/types/sse';
 import { dbReactionTimes } from './services/db.server';
 import { SerialReactionTest } from './services/serial.server';
+import { ReactionEmitterMessage } from './types/emitter';
+import { SerialPort } from 'serialport';
+import { globalServerState } from './services/state.server';
 
 const ABORT_DELAY = 5_000;
+const USE_SERIAL = false;
 
 const randomString = (n: number) =>
   [...Array(n)].map(() => Math.random().toString(36)[2]).join('');
 
-const serial = new SerialReactionTest('/dev/cu.usbmodem11301');
-console.log(serial);
+USE_SERIAL &&
+  (async () => {
+    const port = (await SerialPort.list()).find(
+      (p) =>
+        p.manufacturer &&
+        typeof p.manufacturer === 'string' &&
+        p.manufacturer.includes('Arduino')
+    );
+    console.log(`Using serial port: ${port.path}..`);
+
+    const serial = new SerialReactionTest(port.path);
+    serial.addStateChangeListener((state) => {
+      switch (state.state) {
+        case 'running':
+          reactionEmitter.emit(
+            'message',
+            globalServerState.currentReactionUser.name
+              ? {
+                  type: 'reaction-test-started',
+                  username: globalServerState.currentReactionUser.name
+                }
+              : ({
+                  type: 'reaction-test-started-standalone'
+                } satisfies ReactionEmitterMessage)
+          );
+          break;
+        case 'finished': {
+          if (!globalServerState.currentReactionUser.name) {
+            reactionEmitter.emit('message', {
+              type: 'reaction-test-finished-standalone'
+            } satisfies ReactionEmitterMessage);
+            break;
+          }
+          // user finished the reaction test, publish it
+          const timeEntry = dbReactionTimes.insert({
+            username: globalServerState.currentReactionUser.name,
+            // save the time in seconds
+            time: state.timeInMicros / 1_000_000.0
+          })!;
+
+          globalServerState.currentReactionUser = {
+            name: undefined,
+            lastUpdated: Date.now()
+          };
+
+          reactionEmitter.emit('message', {
+            type: 'reaction-test-finished',
+            timeEntry
+          } satisfies ReactionEmitterMessage);
+          break;
+        }
+        case 'failed':
+          globalServerState.currentReactionUser = {
+            name: undefined,
+            lastUpdated: Date.now()
+          };
+
+          reactionEmitter.emit('message', {
+            type: 'reaction-test-failed'
+          } satisfies ReactionEmitterMessage);
+          break;
+      }
+    });
+  })();
 
 const tick = () => {
   dbReactionTimes.insert({
@@ -30,13 +95,12 @@ const tick = () => {
     time: Math.random()
   });
 
-  reactionEmitter.emit(
-    'message',
-    'update-leaderboard' as ReactionServerClientMessage
-  );
+  reactionEmitter.emit('message', {
+    type: 'update-leaderboard'
+  } satisfies ReactionEmitterMessage);
 };
 
-setInterval(tick, 2000);
+setInterval(tick, 5000);
 
 export default function handleRequest(
   request: Request,

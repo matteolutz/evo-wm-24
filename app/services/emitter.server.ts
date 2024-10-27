@@ -1,2 +1,5 @@
 import { EventEmitter } from 'node:events';
-export const reactionEmitter = new EventEmitter();
+import { ReactionEmitterMessage } from '~/types/emitter';
+export const reactionEmitter = new EventEmitter<{
+  message: [ReactionEmitterMessage];
+}>();
