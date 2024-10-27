@@ -14,11 +14,15 @@ import { renderToPipeableStream } from 'react-dom/server';
 import { reactionEmitter } from './services/emitter.server';
 import { ReactionServerClientMessage } from '~/types/sse';
 import { dbReactionTimes } from './services/db.server';
+import { SerialReactionTest } from './services/serial.server';
 
 const ABORT_DELAY = 5_000;
 
 const randomString = (n: number) =>
   [...Array(n)].map(() => Math.random().toString(36)[2]).join('');
+
+const serial = new SerialReactionTest('/dev/cu.usbmodem11301');
+console.log(serial);
 
 const tick = () => {
   dbReactionTimes.insert({
