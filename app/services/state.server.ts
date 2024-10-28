@@ -7,7 +7,7 @@ export type GlobalServerState = {
 
 export const globalServerState: GlobalServerState = {
   currentReactionTest: {
-    user: { name: 'Matteo', teamName: 'evolut1on' },
+    user: undefined,
     lastUpdated: Date.now()
   }
 };

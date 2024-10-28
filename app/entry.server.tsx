@@ -18,12 +18,16 @@ import { ReactionEmitterMessage } from './types/emitter';
 import { SerialPort } from 'serialport';
 import { globalServerState } from './services/state.server';
 import { ALL_TEAMS } from './utils/teams';
+import { REACTION_TEST_QUEUE_TIMEOUT_SECONDS } from './utils/constants';
 
 const ABORT_DELAY = 5_000;
-const USE_SERIAL = false;
+const USE_SERIAL = true;
+const AUTO_FILL_LEADERBOARD = false;
 
 const randomString = (n: number) =>
   [...Array(n)].map(() => Math.random().toString(36)[2]).join('');
+
+export let serial: SerialReactionTest | undefined;
 
 USE_SERIAL &&
   (async () => {
@@ -35,7 +39,7 @@ USE_SERIAL &&
     );
     console.log(`Using serial port: ${port.path}..`);
 
-    const serial = new SerialReactionTest(port.path);
+    serial = new SerialReactionTest(port.path);
     serial.addStateChangeListener((state) => {
       switch (state.state) {
         case 'running':
@@ -44,7 +48,7 @@ USE_SERIAL &&
             globalServerState.currentReactionTest.user
               ? {
                   type: 'reaction-test-started',
-                  username: globalServerState.currentReactionTest.user.name
+                  user: globalServerState.currentReactionTest.user
                 }
               : ({
                   type: 'reaction-test-started-standalone'
@@ -52,18 +56,29 @@ USE_SERIAL &&
           );
           break;
         case 'finished': {
-          if (!globalServerState.currentReactionTest.user) {
+          if (
+            !globalServerState.currentReactionTest.user ||
+            Date.now() - globalServerState.currentReactionTest.lastUpdated >
+              REACTION_TEST_QUEUE_TIMEOUT_SECONDS * 1_000
+          ) {
+            globalServerState.currentReactionTest = {
+              user: undefined,
+              lastUpdated: Date.now()
+            };
+
             reactionEmitter.emit('message', {
               type: 'reaction-test-finished-standalone'
             } satisfies ReactionEmitterMessage);
             break;
           }
+
           // user finished the reaction test, publish it
           const timeEntry = dbReactionTimes.insert({
             username: globalServerState.currentReactionTest.user.name,
             team: globalServerState.currentReactionTest.user.teamName,
             // save the time in seconds
-            time: state.timeInMicros / 1_000_000.0
+            time: state.timeInMicros / 1_000_000.0,
+            createdAt: Date.now()
           })!;
 
           globalServerState.currentReactionTest = {
@@ -87,6 +102,13 @@ USE_SERIAL &&
             type: 'reaction-test-failed'
           } satisfies ReactionEmitterMessage);
           break;
+        case 'lights-out':
+          if (!globalServerState.currentReactionTest.user) break;
+          reactionEmitter.emit('message', {
+            type: 'reaction-test-lights-out',
+            user: globalServerState.currentReactionTest.user
+          } satisfies ReactionEmitterMessage);
+          break;
       }
     });
   })();
@@ -95,7 +117,8 @@ const tick = () => {
   dbReactionTimes.insert({
     username: randomString(5),
     time: Math.random(),
-    team: ALL_TEAMS[Math.floor(Math.random() * ALL_TEAMS.length)].name
+    team: ALL_TEAMS[Math.floor(Math.random() * ALL_TEAMS.length)].name,
+    createdAt: Date.now()
   });
 
   reactionEmitter.emit('message', {
@@ -103,7 +126,7 @@ const tick = () => {
   } satisfies ReactionEmitterMessage);
 };
 
-setInterval(tick, 5000);
+AUTO_FILL_LEADERBOARD && setInterval(tick, 5000);
 
 export default function handleRequest(
   request: Request,

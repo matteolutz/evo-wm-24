@@ -4,12 +4,14 @@ export enum RemoteSerialPacketType {
   StartReaction = 0x1,
   EndReaction = 0x2,
   EndReactionFailed = 0x3,
+  LightsOut = 0x4,
   Handshake = 0x69,
   HandshakeAck = 0x6a
 }
 
 export enum SerialPacketType {
-  Handshake = 0x1
+  Handshake = 0x1,
+  TestQueued = 0x2
 }
 
 export type SerialReactionTestState =
@@ -18,6 +20,9 @@ export type SerialReactionTestState =
     }
   | {
       state: 'running';
+    }
+  | {
+      state: 'lights-out';
     }
   | {
       state: 'finished';
@@ -97,6 +102,9 @@ export class SerialReactionTest {
       case RemoteSerialPacketType.EndReactionFailed:
         this._updateState({ state: 'failed' });
         break;
+      case RemoteSerialPacketType.LightsOut:
+        this._updateState({ state: 'lights-out' });
+        break;
       default:
         console.log('Unknown packet type', packetType);
         this._updateState({ state: 'idle' });
@@ -126,55 +134,3 @@ export class SerialReactionTest {
     this._stateChangeListeners.push(listener);
   }
 }
-/*
-const port = new SerialPort({
-  path: '/dev/cu.usbmodem11301',
-  baudRate: 115200
-});
-const parser = port.pipe(new ByteLengthParser({ length: 5 }));
-
-export const sendBasicSerialPacket = (
-  packetType: SerialPacketType,
-  data: number
-): void => {
-  const buffer = new Uint8Array(5);
-  buffer[0] = packetType;
-  buffer[1] = data >> 24;
-  buffer[2] = data >> 16;
-  buffer[3] = data >> 8;
-  buffer[4] = data;
-  port.write(buffer);
-};
-
-export const serialListen = () => {
-  parser.on('data', (data: Buffer) => {
-    const [packetType, ...payload] = data;
-    switch (packetType as RemoteSerialPacketType) {
-      case RemoteSerialPacketType.Handshake:
-        console.log('Handshake received', payload);
-        sendBasicSerialPacket(SerialPacketType.Handshake, 0x0);
-        break;
-      case RemoteSerialPacketType.HandshakeAck:
-        console.log('Handshake ack received', payload);
-        break;
-      case RemoteSerialPacketType.StartReaction:
-        console.log('Starting reactiont test...');
-        break;
-      case RemoteSerialPacketType.EndReaction: {
-        const reactionTime =
-          (payload[0] << 24) |
-          (payload[1] << 16) |
-          (payload[2] << 8) |
-          payload[3];
-        console.log(`Ending reaction test. Time was: ${reactionTime}ms`);
-        break;
-      }
-      case RemoteSerialPacketType.EndReactionFailed:
-        console.log('Ending reaction test failed');
-        break;
-      default:
-        console.log('Unknown packet type', packetType);
-    }
-  });
-};
-*/

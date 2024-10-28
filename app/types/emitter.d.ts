@@ -9,7 +9,11 @@ export type ReactionEmitterMessage =
     }
   | {
       type: 'reaction-test-started';
-      username: string;
+      user: { name: string; teamName: string | undefined };
+    }
+  | {
+      type: 'reaction-test-lights-out';
+      user: { name: string; teamName: string | undefined };
     }
   | {
       type: 'reaction-test-finished';

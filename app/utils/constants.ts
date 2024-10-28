@@ -1,0 +1,1 @@
+export const REACTION_TEST_QUEUE_TIMEOUT_SECONDS: number = 20;
