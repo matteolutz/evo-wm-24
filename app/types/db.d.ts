@@ -1,5 +1,6 @@
 export type ReactionTimeEntry = {
   username: string;
+  team?: string;
   time: number;
 };
 

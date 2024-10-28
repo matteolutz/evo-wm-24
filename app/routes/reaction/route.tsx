@@ -1,5 +1,11 @@
-import { json, useLoaderData, useRevalidator } from '@remix-run/react';
-import { Award, Medal } from 'lucide-react';
+import {
+  Form,
+  json,
+  useActionData,
+  useLoaderData,
+  useRevalidator
+} from '@remix-run/react';
+import { AlertCircle, Award, Medal } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useEventSource } from 'remix-utils/sse/react';
 import BackButton from '~/components/evo/backButton';
@@ -10,6 +16,27 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '~/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue
+} from '~/components/ui/select';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
 import {
   Table,
   TableBody,
@@ -22,6 +49,11 @@ import { cn } from '~/lib/utils';
 import { dbReactionTimes } from '~/services/db.server';
 import { ReactionTimeEntry } from '~/types/db';
 import { ReactionEmitterMessage } from '~/types/emitter';
+import { ALL_TEAMS, getTeamByName } from '~/utils/teams';
+import groupBy from '~/utils/group';
+import { ActionFunctionArgs, TypedResponse } from '@remix-run/node';
+import { globalServerState } from '~/services/state.server';
+import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 
 export const loader = async () => {
   if (process.env.EVO_MASTER_HOST) {
@@ -41,6 +73,33 @@ export const loader = async () => {
   });
 };
 
+export const action = async ({
+  request
+}: ActionFunctionArgs): Promise<
+  TypedResponse<{ tag: 'error'; error: 'test-in-use' } | { tag: 'success' }>
+> => {
+  if (globalServerState.currentReactionTest.user) {
+    const delta =
+      Date.now() - globalServerState.currentReactionTest.lastUpdated;
+    if (delta < 20_000) {
+      return json({ tag: 'error', error: 'test-in-use' });
+    }
+  }
+
+  const formData = await request.formData();
+  const teamName = formData.get('teamName') as string;
+  const userName = formData.get('username') as string;
+
+  const team = teamName === 'none' ? undefined : getTeamByName(teamName);
+
+  globalServerState.currentReactionTest = {
+    user: { name: userName, teamName: team?.name },
+    lastUpdated: Date.now()
+  };
+
+  return json({ tag: 'success' });
+};
+
 const Reaction = () => {
   const { reactions, sseUrl } = useLoaderData<typeof loader>();
   const [reactionTestRunning, setReactionTestRunning] = useState<
@@ -50,6 +109,8 @@ const Reaction = () => {
   const { revalidate } = useRevalidator();
 
   const serverMessage = useEventSource(sseUrl);
+
+  const actionData = useActionData<typeof action>();
 
   useEffect(() => {
     if (!serverMessage) return;
@@ -116,18 +177,92 @@ const Reaction = () => {
               ) : (
                 <>
                   <p>Reaction test is ready.</p>{' '}
-                  <Button variant="link">Test your reaction!</Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="link">Test your reaction!</Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <Form method="post">
+                        <DialogHeader>
+                          <DialogTitle>Reaction Test</DialogTitle>
+                          <DialogDescription>
+                            You can use the{' '}
+                            <span className="font-bold">Reaction Test</span>{' '}
+                            right next to you to find out how good your reaction
+                            is. Optionally you can enter you name and team right
+                            here, so that your result will be saved in the
+                            leaderboard.
+                          </DialogDescription>
+                        </DialogHeader>
+                        {actionData && actionData.tag === 'error' && (
+                          <Alert
+                            className="my-4 border-2"
+                            variant="destructive"
+                          >
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertTitle>Reaction test start failed</AlertTitle>
+                            <AlertDescription>
+                              {actionData.error}
+                            </AlertDescription>
+                          </Alert>
+                        )}
+                        {actionData && actionData.tag === 'success' && (
+                          <Alert className="my-4 border-2" variant="success">
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertTitle>Reaction test initiated</AlertTitle>
+                            <AlertDescription>
+                              Please start the reaction test right next to you.
+                              The result will be saved in the leaderboard.
+                            </AlertDescription>
+                          </Alert>
+                        )}
+                        <div className="py-8 flex flex-col gap-4">
+                          <div className="grid w-full items-center gap-1.5">
+                            <Label htmlFor="username">Name</Label>
+                            <Input
+                              type="text"
+                              id="username"
+                              placeholder="Name"
+                              name="username"
+                            />
+                          </div>
+                          <div className="grid w-full items-center gap-1.5">
+                            <Label htmlFor="teamSelect">Team</Label>
+                            <Select name="teamName" defaultValue="none">
+                              <SelectTrigger id="teamSelect">
+                                <SelectValue placeholder="Team" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="none">None</SelectItem>
+                                <SelectSeparator />
+                                {Array.from(
+                                  groupBy(ALL_TEAMS, (t) => t.country).entries()
+                                ).map(([country, teams]) => (
+                                  <SelectGroup key={country}>
+                                    <SelectLabel>{country}</SelectLabel>
+                                    {teams.map((t) => (
+                                      <SelectItem key={t.name} value={t.name}>
+                                        {t.name}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectGroup>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <Button type="submit">Start Test</Button>
+                        </DialogFooter>
+                      </Form>
+                    </DialogContent>
+                  </Dialog>
                 </>
               )}
             </CardDescription>
           </CardHeader>
         </Card>
-        {/*reactionTestRunning &&
-          (typeof reactionTestRunning === 'string' ? (
-            <p>{reactionTestRunning} is doing a test...</p>
-          ) : (
-            <p>Test running...</p>
-            ))*/}
+
         <div className="relative w-full max-h-full overflow-x-hidden bg-background rounded-lg shadow-lg">
           <Table>
             <TableHeader>
@@ -151,7 +286,17 @@ const Reaction = () => {
                   <TableCell className="text-center">
                     {idx === 0 ? <Medal /> : idx < 3 ? <Award /> : idx + 1}
                   </TableCell>
-                  <TableCell className="text-lg">{r.username}</TableCell>
+                  <TableCell className="text-lg w-full">
+                    {r.username}{' '}
+                    {r.team && (
+                      <span
+                        className="ml-2 py-1 px-2 bg-background rounded text-sm border-2"
+                        style={{ color: getTeamByName(r.team)!.cssColor }}
+                      >
+                        {getTeamByName(r.team)!.name}
+                      </span>
+                    )}
+                  </TableCell>
                   <TableCell className="text-center">
                     {(r.time * 1000).toFixed(2)}ms
                   </TableCell>

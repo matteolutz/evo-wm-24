@@ -17,6 +17,7 @@ import { SerialReactionTest } from './services/serial.server';
 import { ReactionEmitterMessage } from './types/emitter';
 import { SerialPort } from 'serialport';
 import { globalServerState } from './services/state.server';
+import { ALL_TEAMS } from './utils/teams';
 
 const ABORT_DELAY = 5_000;
 const USE_SERIAL = false;
@@ -40,10 +41,10 @@ USE_SERIAL &&
         case 'running':
           reactionEmitter.emit(
             'message',
-            globalServerState.currentReactionUser.name
+            globalServerState.currentReactionTest.user
               ? {
                   type: 'reaction-test-started',
-                  username: globalServerState.currentReactionUser.name
+                  username: globalServerState.currentReactionTest.user.name
                 }
               : ({
                   type: 'reaction-test-started-standalone'
@@ -51,7 +52,7 @@ USE_SERIAL &&
           );
           break;
         case 'finished': {
-          if (!globalServerState.currentReactionUser.name) {
+          if (!globalServerState.currentReactionTest.user) {
             reactionEmitter.emit('message', {
               type: 'reaction-test-finished-standalone'
             } satisfies ReactionEmitterMessage);
@@ -59,13 +60,14 @@ USE_SERIAL &&
           }
           // user finished the reaction test, publish it
           const timeEntry = dbReactionTimes.insert({
-            username: globalServerState.currentReactionUser.name,
+            username: globalServerState.currentReactionTest.user.name,
+            team: globalServerState.currentReactionTest.user.teamName,
             // save the time in seconds
             time: state.timeInMicros / 1_000_000.0
           })!;
 
-          globalServerState.currentReactionUser = {
-            name: undefined,
+          globalServerState.currentReactionTest = {
+            user: undefined,
             lastUpdated: Date.now()
           };
 
@@ -76,8 +78,8 @@ USE_SERIAL &&
           break;
         }
         case 'failed':
-          globalServerState.currentReactionUser = {
-            name: undefined,
+          globalServerState.currentReactionTest = {
+            user: undefined,
             lastUpdated: Date.now()
           };
 
@@ -92,7 +94,8 @@ USE_SERIAL &&
 const tick = () => {
   dbReactionTimes.insert({
     username: randomString(5),
-    time: Math.random()
+    time: Math.random(),
+    team: ALL_TEAMS[Math.floor(Math.random() * ALL_TEAMS.length)].name
   });
 
   reactionEmitter.emit('message', {

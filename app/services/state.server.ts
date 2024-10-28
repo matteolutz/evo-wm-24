@@ -1,7 +1,13 @@
 export type GlobalServerState = {
-  currentReactionUser: { name: string | undefined; lastUpdated: number };
+  currentReactionTest: {
+    user: { name: string; teamName: string | undefined } | undefined;
+    lastUpdated: number;
+  };
 };
 
 export const globalServerState: GlobalServerState = {
-  currentReactionUser: { name: 'Matteo', lastUpdated: Date.now() }
+  currentReactionTest: {
+    user: { name: 'Matteo', teamName: 'evolut1on' },
+    lastUpdated: Date.now()
+  }
 };
