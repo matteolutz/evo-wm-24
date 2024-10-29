@@ -21,7 +21,7 @@ import { ALL_TEAMS } from './utils/teams';
 import { REACTION_TEST_QUEUE_TIMEOUT_SECONDS } from './utils/constants';
 
 const ABORT_DELAY = 5_000;
-const USE_SERIAL = true;
+const USE_SERIAL = !process.env.DISABLE_SERIAL;
 const AUTO_FILL_LEADERBOARD = false;
 
 const randomString = (n: number) =>

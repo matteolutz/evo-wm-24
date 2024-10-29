@@ -1,5 +1,8 @@
 @import 'complementary/fonts.css';
+@import 'complementary/animations.css';
+
 @import 'complementary/patterns/blueprint.css';
+@import 'complementary/patterns/street.css';
 
 @tailwind base;
 @tailwind components;

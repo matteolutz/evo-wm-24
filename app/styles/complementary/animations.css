@@ -1,0 +1,12 @@
+@layer base {
+  @keyframes driveLeftToRightLoading {
+    0% {
+      left: 0;
+      transform: translateX(-100%) translateY(-50%);
+    }
+    100% {
+      left: 100%;
+      transform: translateX(100%) translateY(-50%);
+    }
+  }
+}

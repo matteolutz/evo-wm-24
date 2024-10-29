@@ -5,7 +5,7 @@ export const meta: MetaFunction = () => {
   return [{ title: 'evolut1on' }];
 };
 
-export default function Index() {
+const Index = () => {
   return (
     <div className="w-screen h-screen">
       <div className="blueprint size-full bg-evo-orange">
@@ -17,10 +17,13 @@ export default function Index() {
           />
           <h1>World Finals Saudi-Arabia 24</h1>
         </div>
-        <div className="absolute top-0 left-0 z-10 w-full h-full flex justify-center items-center">
+        <div className="absolute top-0 left-0 z-10 w-full h-full flex justify-center items-center flex-col gap-2">
           <Link to="/reaction">Reaction</Link>
+          <Link to="/game">Mobile Game Leaderboard</Link>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default Index;

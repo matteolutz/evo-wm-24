@@ -1,0 +1,22 @@
+.street {
+  position: relative;
+  /*overflow-x: hidden;
+  overflow-y: visible;*/
+}
+
+.street::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 2px; /* Adjust thickness of dashed line */
+  background-image: repeating-linear-gradient(
+    to right,
+    hsl(var(--primary)) 0,
+    hsl(var(--primary)) 20px,
+    transparent 20px,
+    transparent 40px
+  );
+  transform: translateY(-50%);
+}

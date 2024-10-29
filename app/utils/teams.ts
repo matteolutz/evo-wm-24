@@ -1,8 +1,8 @@
-export interface Team {
+export type Team = {
   name: string;
   cssColor: string;
   country: string;
-}
+};
 
 export const ALL_TEAMS: Array<Team> = [
   {
