@@ -6,7 +6,7 @@ import {
   useRevalidator
 } from '@remix-run/react';
 import { AlertCircle, Award, Medal } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useEventSource } from 'remix-utils/sse/react';
 import BackButton from '~/components/evo/backButton';
 import { Button } from '~/components/ui/button';
@@ -47,7 +47,6 @@ import {
 } from '~/components/ui/table';
 import { cn } from '~/lib/utils';
 import { dbReactionTimes } from '~/services/db.server';
-import { ReactionTimeEntry } from '~/types/db';
 import { ReactionEmitterMessage } from '~/types/emitter';
 import { ALL_TEAMS, getTeamByName } from '~/utils/teams';
 import groupBy from '~/utils/group';
@@ -61,17 +60,6 @@ import StopWatch from '~/components/evo/stopWatch';
 import ConfettiExplosion from 'react-confetti-explosion';
 
 export const loader = async () => {
-  if (process.env.EVO_MASTER_HOST) {
-    const data = await fetch(
-      `http://${process.env.EVO_MASTER_HOST}/api/reaction`
-    ).then((r) => r.json());
-
-    return json({
-      reactions: data as Array<ReactionTimeEntry>,
-      sseUrl: `http://${process.env.EVO_MASTER_HOST}/sse/reaction`
-    });
-  }
-
   return json({
     reactions: dbReactionTimes.chain().find().simplesort('time').data(),
     sseUrl: '/sse/reaction'
@@ -82,7 +70,10 @@ export const action = async ({
   request
 }: ActionFunctionArgs): Promise<
   TypedResponse<
-    | { tag: 'error'; error: 'test-in-use' | 'test-queued' }
+    | {
+        tag: 'error';
+        error: 'test-in-use' | 'invalid-form-data' | 'test-queued';
+      }
     | { tag: 'success'; user: { name: string; teamName: string | undefined } }
   >
 > => {
@@ -100,6 +91,15 @@ export const action = async ({
   const formData = await request.formData();
   const teamName = formData.get('teamName') as string;
   const userName = formData.get('username') as string;
+
+  if (
+    teamName === null ||
+    userName === null ||
+    teamName === 'none' ||
+    userName === ''
+  ) {
+    return json({ tag: 'error', error: 'invalid-form-data' });
+  }
 
   const team = teamName === 'none' ? undefined : getTeamByName(teamName);
 
@@ -146,6 +146,7 @@ const Reaction = () => {
   const { revalidate } = useRevalidator();
 
   const [dialogOpen, setDialogOpen] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const serverMessage = useEventSource(sseUrl);
 
@@ -177,6 +178,8 @@ const Reaction = () => {
         );
         // TODO: show popup
         // revalidate();
+
+        formRef.current?.reset();
         reactions.push(message.timeEntry);
         break;
       // eslint-disable-next-line no-fallthrough
@@ -215,6 +218,15 @@ const Reaction = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serverMessage]);
+
+  useEffect(() => {
+    if (dialogOpen) return;
+
+    formRef.current?.reset();
+    revalidate();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dialogOpen]);
 
   return (
     <div className="w-screen h-screen">
@@ -263,7 +275,7 @@ const Reaction = () => {
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
-                  <Form method="post">
+                  <Form method="post" ref={formRef}>
                     <DialogHeader>
                       <DialogTitle>Reaction Test</DialogTitle>
                       {reactionTestState.state !== 'user-running' &&
@@ -299,6 +311,7 @@ const Reaction = () => {
                         </p>
                         <Button
                           variant="link"
+                          type="button"
                           onClick={setDialogOpen.bind(this, false)}
                         >
                           See your time on the leaderboard
@@ -333,13 +346,12 @@ const Reaction = () => {
                         {actionData && actionData.tag === 'success' ? (
                           <Alert className="my-4 border-2" variant="success">
                             <AlertCircle className="h-4 w-4" />
-                            <AlertTitle>Reaction test queued</AlertTitle>
+                            <AlertTitle>Reaction test started!</AlertTitle>
                             <AlertDescription>
-                              Please start the reaction test right next to you.
-                              The first test in the next{' '}
-                              {REACTION_TEST_QUEUE_TIMEOUT_SECONDS} seconds will
-                              be displayed on the leaderboard with the name{' '}
-                              {actionData.user.name}
+                              The reaction test next to you{' '}
+                              <span className="font-bold">starts now</span>. The
+                              next test will be displayed on the leaderboard
+                              with the name {actionData.user.name}
                             </AlertDescription>
                           </Alert>
                         ) : (
@@ -351,6 +363,7 @@ const Reaction = () => {
                                 id="username"
                                 placeholder="Name"
                                 name="username"
+                                required
                               />
                             </div>
                             <div className="grid w-full items-center gap-1.5">
