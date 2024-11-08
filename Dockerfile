@@ -20,6 +20,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules /app/node_modules
 ADD package.json yarn.lock ./
 RUN yarn install --production
+RUN sudo yarn install serialport
 
 # Build the app
 FROM base AS build
