@@ -22,6 +22,7 @@ import { REACTION_TEST_QUEUE_TIMEOUT_SECONDS } from './utils/constants';
 
 const ABORT_DELAY = 5_000;
 const USE_SERIAL = !process.env.DISABLE_SERIAL;
+const SERIAL_PORT = process.env.SERIAL_PORT;
 const AUTO_FILL_LEADERBOARD = false;
 
 const randomString = (n: number) =>
@@ -31,15 +32,18 @@ export let serial: SerialReactionTest | undefined;
 
 USE_SERIAL &&
   (async () => {
-    const port = (await SerialPort.list()).find(
-      (p) =>
-        p.manufacturer &&
-        typeof p.manufacturer === 'string' &&
-        p.manufacturer.includes('Arduino')
-    );
-    console.log(`Using serial port: ${port.path}..`);
+    const port =
+      SERIAL_PORT ||
+      (await SerialPort.list()).find(
+        (p) =>
+          p.manufacturer &&
+          typeof p.manufacturer === 'string' &&
+          p.manufacturer.includes('Arduino')
+      ).path;
 
-    serial = new SerialReactionTest(port.path);
+    console.log(`Using serial port: ${port}..`);
+
+    serial = new SerialReactionTest(port);
     serial.addStateChangeListener((state) => {
       switch (state.state) {
         case 'running':

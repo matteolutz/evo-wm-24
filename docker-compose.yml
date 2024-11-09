@@ -4,6 +4,7 @@ services:
     restart: always
     environment:
       - PORT=80
+      - SERIAL_PORT=${SERIAL_PORT}
     ports:
       - '80:80'
     volumes:

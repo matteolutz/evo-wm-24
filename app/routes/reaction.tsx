@@ -92,12 +92,7 @@ export const action = async ({
   const teamName = formData.get('teamName') as string;
   const userName = formData.get('username') as string;
 
-  if (
-    teamName === null ||
-    userName === null ||
-    teamName === 'none' ||
-    userName === ''
-  ) {
+  if (teamName === null || userName === null || userName === '') {
     return json({ tag: 'error', error: 'invalid-form-data' });
   }
 
@@ -220,10 +215,15 @@ const Reaction = () => {
   }, [serverMessage]);
 
   useEffect(() => {
-    if (dialogOpen) return;
-
+    switch (reactionTestState.state) {
+      case 'user-finished':
+      case 'failed':
+        setReactionTestState({ state: 'idle', busy: false });
+        break;
+    }
     formRef.current?.reset();
-    revalidate();
+
+    if (!dialogOpen) revalidate();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dialogOpen]);
@@ -309,13 +309,6 @@ const Reaction = () => {
                         <p className="text-4xl font-bold">
                           {(reactionTestState.time * 1_000).toFixed(2)}ms
                         </p>
-                        <Button
-                          variant="link"
-                          type="button"
-                          onClick={setDialogOpen.bind(this, false)}
-                        >
-                          See your time on the leaderboard
-                        </Button>
                         <ConfettiExplosion
                           zIndex={100000}
                           force={1.2}
