@@ -58,6 +58,7 @@ import { SerialPacketType } from '~/services/serial.server';
 import { REACTION_TEST_QUEUE_TIMEOUT_SECONDS } from '~/utils/constants';
 import StopWatch from '~/components/evo/stopWatch';
 import ConfettiExplosion from 'react-confetti-explosion';
+import EvoKeyboard from '~/components/evo/evoKeyboard';
 
 export const loader = async () => {
   return json({
@@ -142,6 +143,9 @@ const Reaction = () => {
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+
+  const [nameInputFieldRef, setNameInputFieldRef] =
+    useState<HTMLInputElement | null>(null);
 
   const serverMessage = useEventSource(sseUrl);
 
@@ -357,6 +361,7 @@ const Reaction = () => {
                                 placeholder="Name"
                                 name="username"
                                 required
+                                ref={setNameInputFieldRef.bind(this)}
                               />
                             </div>
                             <div className="grid w-full items-center gap-1.5">
@@ -454,6 +459,8 @@ const Reaction = () => {
           </Table>
         </div>
       </div>
+
+      <EvoKeyboard htmlFor={nameInputFieldRef} />
     </div>
   );
 };

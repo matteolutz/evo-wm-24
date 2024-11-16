@@ -5736,6 +5736,11 @@ react-router@6.27.0:
   dependencies:
     "@remix-run/router" "1.20.0"
 
+react-simple-keyboard@^3.8.22:
+  version "3.8.22"
+  resolved "https://registry.yarnpkg.com/react-simple-keyboard/-/react-simple-keyboard-3.8.22.tgz#74e7085e1393b40bc84f8078ef38228979b74ec1"
+  integrity sha512-7zAJgMRgswikkgQFgqH0YkAPZ1HC1PT9Dbc/1qH5s5LvYbN7AKYJsLEDIEhAHGXCfynaNyIo1F2dIhFxb0IIBA==
+
 react-style-singleton@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/react-style-singleton/-/react-style-singleton-2.2.1.tgz#f99e420492b2d8f34d38308ff660b60d0b1205b4"
