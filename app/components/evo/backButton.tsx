@@ -1,8 +1,8 @@
 import React from 'react';
 import { Button } from '../ui/button';
-import { Link } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { cn } from '~/lib/utils';
+import EvoLink from './evoLink';
 
 export interface BackButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -20,9 +20,9 @@ const BackButton = React.forwardRef<HTMLButtonElement, BackButtonProps>(
         size="icon"
         asChild
       >
-        <Link to={to}>
+        <EvoLink to={to}>
           <ChevronLeft />
-        </Link>
+        </EvoLink>
       </Button>
     );
   }

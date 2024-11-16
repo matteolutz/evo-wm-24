@@ -1,10 +1,11 @@
 import {
-  Link,
   Links,
   Meta,
   Outlet,
   Scripts,
-  ScrollRestoration
+  ScrollRestoration,
+  useNavigate,
+  useSearchParams
 } from '@remix-run/react';
 
 import './styles/tailwind.css';
@@ -12,6 +13,12 @@ import { Card } from './components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from './components/ui/alert';
 import { Button } from './components/ui/button';
 import GlobalLoader from './components/evo/globalLoader';
+import EvoLink from './components/evo/evoLink';
+import { useEventSource } from 'remix-utils/sse/react';
+import useNFCReaderId from './hooks/useNFCReaderId';
+import { useEffect } from 'react';
+import { NFCEmitterMessage } from './types/emitter';
+import useEvoNavigate from './hooks/useEvoNavigate';
 
 export const ErrorBoundary = () => {
   return (
@@ -24,7 +31,7 @@ export const ErrorBoundary = () => {
               <AlertTitle>Oops! Something went wrong</AlertTitle>
               <AlertDescription>
                 <Button variant="link" asChild>
-                  <Link to="/">Take be back to evolut1on</Link>
+                  <EvoLink to="/">Take be back to evolut1on</EvoLink>
                 </Button>
               </AlertDescription>
             </Alert>
@@ -55,5 +62,26 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const nfcReaderId = useNFCReaderId();
+  const navigate = useEvoNavigate();
+
+  const nfcMessage = useEventSource('/sse/nfc', { event: '' + nfcReaderId });
+
+  useEffect(() => {
+    if (!nfcMessage) return;
+
+    const { message } = JSON.parse(nfcMessage) as {
+      message: NFCEmitterMessage;
+    };
+
+    switch (message.type) {
+      case 'navigate-to':
+        navigate(message.to);
+        break;
+    }
+
+    console.log(nfcMessage);
+  }, [nfcMessage]);
+
   return <Outlet />;
 }

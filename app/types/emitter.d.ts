@@ -25,3 +25,8 @@ export type ReactionEmitterMessage =
   | {
       type: 'reaction-test-failed';
     };
+
+export type NFCEmitterMessage = {
+  type: 'navigate-to';
+  to: string;
+} & { nfcReaderId: number };
