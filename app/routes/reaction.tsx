@@ -22,6 +22,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogOverlay,
   DialogTitle,
   DialogTrigger
 } from '~/components/ui/dialog';
@@ -264,21 +265,16 @@ const Reaction = () => {
                 <p>Reaction test is ready.</p>
               )}
               <Dialog
+                modal={true}
                 open={dialogOpen}
-                onOpenChange={(open) => {
-                  if (!open) {
-                    setReactionTestState({ state: 'idle', busy: false });
-                  }
-
-                  setDialogOpen(open);
-                }}
+                onOpenChange={setDialogOpen.bind(this)}
               >
                 <DialogTrigger asChild>
                   <Button disabled={reactionTestState.busy} variant="link">
                     Test your reaction!
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent onInteractOutside={(e) => e.preventDefault()}>
                   <Form method="post" ref={formRef}>
                     <DialogHeader>
                       <DialogTitle>Reaction Test</DialogTitle>
@@ -401,6 +397,8 @@ const Reaction = () => {
                       )}
                     </DialogFooter>
                   </Form>
+
+                  <EvoKeyboard htmlFor={nameInputFieldRef} />
                 </DialogContent>
               </Dialog>
             </CardDescription>
@@ -459,8 +457,6 @@ const Reaction = () => {
           </Table>
         </div>
       </div>
-
-      <EvoKeyboard htmlFor={nameInputFieldRef} />
     </div>
   );
 };

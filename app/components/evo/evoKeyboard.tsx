@@ -10,7 +10,10 @@ const EvoKeyboard: FC<EvoKeyboardProps> = ({ htmlFor }) => {
   const [show, setShow] = useState(false);
 
   const onInputFocus = setShow.bind(this, true);
-  const onInputBlur = setShow.bind(this, false);
+  const onInputBlur = (e: FocusEvent) => {
+    if (!e.relatedTarget) return;
+    setShow(false);
+  };
 
   useEffect(() => {
     if (!htmlFor) return;
@@ -24,13 +27,15 @@ const EvoKeyboard: FC<EvoKeyboardProps> = ({ htmlFor }) => {
     };
   }, [htmlFor]);
 
-  return (
-    show && (
-      <div className="fixed bottom-0 left-0 w-full z-[2000]">
-        <Keyboard />
-      </div>
-    )
-  );
+  const handleChange = (value: string, e?: MouseEvent) => {
+    e?.preventDefault();
+
+    if (htmlFor) {
+      htmlFor.value = value;
+    }
+  };
+
+  return show && <Keyboard onChange={handleChange.bind(this)} />;
 };
 
 export default EvoKeyboard;
