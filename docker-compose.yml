@@ -6,6 +6,7 @@ services:
     environment:
       - PORT=80
       - SERIAL_PORT=${SERIAL_PORT}
+      - DISABLE_SERIAL=${DISABLE_SERIAL}
     ports:
       - '80:80'
     volumes:
