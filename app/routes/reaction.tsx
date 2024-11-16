@@ -5,7 +5,7 @@ import {
   useLoaderData,
   useRevalidator
 } from '@remix-run/react';
-import { AlertCircle, Award, Medal } from 'lucide-react';
+import { AlertCircle, Award, Medal, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useEventSource } from 'remix-utils/sse/react';
 import BackButton from '~/components/evo/backButton';
@@ -18,14 +18,15 @@ import {
 } from '~/components/ui/card';
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogOverlay,
+  DialogPortal,
   DialogTitle,
   DialogTrigger
 } from '~/components/ui/dialog';
+import * as DialogPrimitive from '@radix-ui/react-dialog';
 import {
   Select,
   SelectContent,
@@ -274,132 +275,149 @@ const Reaction = () => {
                     Test your reaction!
                   </Button>
                 </DialogTrigger>
-                <DialogContent onInteractOutside={(e) => e.preventDefault()}>
-                  <Form method="post" ref={formRef}>
-                    <DialogHeader>
-                      <DialogTitle>Reaction Test</DialogTitle>
-                      {reactionTestState.state !== 'user-running' &&
-                        reactionTestState.state !== 'lights-out' &&
-                        reactionTestState.state !== 'user-finished' &&
-                        reactionTestState.state !== 'failed' && (
-                          <DialogDescription>
-                            You can use the{' '}
-                            <span className="font-bold">Reaction Test</span>{' '}
-                            right next to you to find out how good your reaction
-                            is.
-                            <br />
-                            If you want, you can enter you name (and team) right
-                            here, so that your result will be displayed on the
-                            leaderboard.
-                          </DialogDescription>
-                        )}
-                    </DialogHeader>
-                    {reactionTestState.state === 'user-running' &&
-                    reactionTestState.user ? (
-                      <div className="py-16 flex justify-center items-center text-lg font-bold">
-                        Wait for lights out!
-                      </div>
-                    ) : reactionTestState.state === 'lights-out' ? (
-                      <div className="py-16 flex justify-center items-center flex-col gap-2 text-4xl font-bold">
-                        <StopWatch startTime={reactionTestState.startTime} />
-                      </div>
-                    ) : reactionTestState.state === 'user-finished' ? (
-                      <div className="py-16 flex justify-center items-center flex-col gap-2">
-                        <p>Great, you finished with</p>
-                        <p className="text-4xl font-bold">
-                          {(reactionTestState.time * 1_000).toFixed(2)}ms
-                        </p>
-                        <ConfettiExplosion
-                          zIndex={100000}
-                          force={1.2}
-                          duration={6000}
-                          particleCount={500}
-                          width={window.innerWidth}
-                        />
-                      </div>
-                    ) : reactionTestState.state === 'failed' ? (
-                      <div className="py-16 flex justify-center items-center flex-col gap-2">
-                        <p>Mmmh, that was a bit too slow.</p>
-                        <p className="text-4xl font-bold">Test failed.</p>
-                      </div>
-                    ) : (
-                      <>
-                        {actionData && actionData.tag === 'error' && (
-                          <Alert
-                            className="my-4 border-2"
-                            variant="destructive"
-                          >
-                            <AlertCircle className="h-4 w-4" />
-                            <AlertTitle>Reaction test start failed</AlertTitle>
-                            <AlertDescription>
-                              {actionData.error}
-                            </AlertDescription>
-                          </Alert>
-                        )}
-                        {actionData && actionData.tag === 'success' ? (
-                          <Alert className="my-4 border-2" variant="success">
-                            <AlertCircle className="h-4 w-4" />
-                            <AlertTitle>Reaction test started!</AlertTitle>
-                            <AlertDescription>
-                              The reaction test next to you{' '}
-                              <span className="font-bold">starts now</span>. The
-                              next test will be displayed on the leaderboard
-                              with the name {actionData.user.name}
-                            </AlertDescription>
-                          </Alert>
-                        ) : (
-                          <div className="py-8 flex flex-col gap-4">
-                            <div className="grid w-full items-center gap-1.5">
-                              <Label htmlFor="username">Name</Label>
-                              <Input
-                                type="text"
-                                id="username"
-                                placeholder="Name"
-                                name="username"
-                                required
-                                ref={setNameInputFieldRef.bind(this)}
-                              />
-                            </div>
-                            <div className="grid w-full items-center gap-1.5">
-                              <Label htmlFor="teamSelect">Team</Label>
-                              <Select name="teamName" defaultValue="none">
-                                <SelectTrigger id="teamSelect">
-                                  <SelectValue placeholder="Team" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="none">None</SelectItem>
-                                  <SelectSeparator />
-                                  {Array.from(
-                                    groupBy(
-                                      ALL_TEAMS,
-                                      (t) => t.country
-                                    ).entries()
-                                  ).map(([country, teams]) => (
-                                    <SelectGroup key={country}>
-                                      <SelectLabel>{country}</SelectLabel>
-                                      {teams.map((t) => (
-                                        <SelectItem key={t.name} value={t.name}>
-                                          {t.name}
-                                        </SelectItem>
-                                      ))}
-                                    </SelectGroup>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          </div>
-                        )}
-                      </>
+                <DialogPortal>
+                  <DialogOverlay>
+                    <EvoKeyboard htmlFor={nameInputFieldRef} />
+                  </DialogOverlay>
+                  <DialogPrimitive.Content
+                    className={cn(
+                      'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg'
                     )}
-                    <DialogFooter>
-                      {!(actionData && actionData.tag === 'success') && (
-                        <Button type="submit">Start Test</Button>
+                    onInteractOutside={(e) => e.preventDefault()}
+                  >
+                    <Form method="post" ref={formRef}>
+                      <DialogHeader>
+                        <DialogTitle>Reaction Test</DialogTitle>
+                        {reactionTestState.state !== 'user-running' &&
+                          reactionTestState.state !== 'lights-out' &&
+                          reactionTestState.state !== 'user-finished' &&
+                          reactionTestState.state !== 'failed' && (
+                            <DialogDescription>
+                              You can use the{' '}
+                              <span className="font-bold">Reaction Test</span>{' '}
+                              right next to you to find out how good your
+                              reaction is.
+                              <br />
+                              If you want, you can enter you name (and team)
+                              right here, so that your result will be displayed
+                              on the leaderboard.
+                            </DialogDescription>
+                          )}
+                      </DialogHeader>
+                      {reactionTestState.state === 'user-running' &&
+                      reactionTestState.user ? (
+                        <div className="py-16 flex justify-center items-center text-lg font-bold">
+                          Wait for lights out!
+                        </div>
+                      ) : reactionTestState.state === 'lights-out' ? (
+                        <div className="py-16 flex justify-center items-center flex-col gap-2 text-4xl font-bold">
+                          <StopWatch startTime={reactionTestState.startTime} />
+                        </div>
+                      ) : reactionTestState.state === 'user-finished' ? (
+                        <div className="py-16 flex justify-center items-center flex-col gap-2">
+                          <p>Great, you finished with</p>
+                          <p className="text-4xl font-bold">
+                            {(reactionTestState.time * 1_000).toFixed(2)}ms
+                          </p>
+                          <ConfettiExplosion
+                            zIndex={100000}
+                            force={1.2}
+                            duration={6000}
+                            particleCount={500}
+                            width={window.innerWidth}
+                          />
+                        </div>
+                      ) : reactionTestState.state === 'failed' ? (
+                        <div className="py-16 flex justify-center items-center flex-col gap-2">
+                          <p>Mmmh, that was a bit too slow.</p>
+                          <p className="text-4xl font-bold">Test failed.</p>
+                        </div>
+                      ) : (
+                        <>
+                          {actionData && actionData.tag === 'error' && (
+                            <Alert
+                              className="my-4 border-2"
+                              variant="destructive"
+                            >
+                              <AlertCircle className="h-4 w-4" />
+                              <AlertTitle>
+                                Reaction test start failed
+                              </AlertTitle>
+                              <AlertDescription>
+                                {actionData.error}
+                              </AlertDescription>
+                            </Alert>
+                          )}
+                          {actionData && actionData.tag === 'success' ? (
+                            <Alert className="my-4 border-2" variant="success">
+                              <AlertCircle className="h-4 w-4" />
+                              <AlertTitle>Reaction test started!</AlertTitle>
+                              <AlertDescription>
+                                The reaction test next to you{' '}
+                                <span className="font-bold">starts now</span>.
+                                The next test will be displayed on the
+                                leaderboard with the name {actionData.user.name}
+                              </AlertDescription>
+                            </Alert>
+                          ) : (
+                            <div className="py-8 flex flex-col gap-4">
+                              <div className="grid w-full items-center gap-1.5">
+                                <Label htmlFor="username">Name</Label>
+                                <Input
+                                  type="text"
+                                  id="username"
+                                  placeholder="Name"
+                                  name="username"
+                                  required
+                                  ref={setNameInputFieldRef.bind(this)}
+                                />
+                              </div>
+                              <div className="grid w-full items-center gap-1.5">
+                                <Label htmlFor="teamSelect">Team</Label>
+                                <Select name="teamName" defaultValue="none">
+                                  <SelectTrigger id="teamSelect">
+                                    <SelectValue placeholder="Team" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="none">None</SelectItem>
+                                    <SelectSeparator />
+                                    {Array.from(
+                                      groupBy(
+                                        ALL_TEAMS,
+                                        (t) => t.country
+                                      ).entries()
+                                    ).map(([country, teams]) => (
+                                      <SelectGroup key={country}>
+                                        <SelectLabel>{country}</SelectLabel>
+                                        {teams.map((t) => (
+                                          <SelectItem
+                                            key={t.name}
+                                            value={t.name}
+                                          >
+                                            {t.name}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectGroup>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </div>
+                          )}
+                        </>
                       )}
-                    </DialogFooter>
-                  </Form>
-
-                  <EvoKeyboard htmlFor={nameInputFieldRef} />
-                </DialogContent>
+                      <DialogFooter>
+                        {!(actionData && actionData.tag === 'success') && (
+                          <Button type="submit">Start Test</Button>
+                        )}
+                      </DialogFooter>
+                    </Form>
+                    <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+                      <X className="h-4 w-4" />
+                      <span className="sr-only">Close</span>
+                    </DialogPrimitive.Close>
+                  </DialogPrimitive.Content>
+                </DialogPortal>
               </Dialog>
             </CardDescription>
           </CardHeader>
