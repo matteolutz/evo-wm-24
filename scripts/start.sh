@@ -24,6 +24,6 @@ fi
 
 # start
 echo "[EVO-PIT] Starting Evo Server..."
-DISABLE_SERIAL=1 SERIAL_PORT=/dev/ttyACM0 docker compose up --force-recreate --no-deps --build
+SERIAL_PORT=/dev/ttyACM0 docker compose up --force-recreate --no-deps --build
 
 echo "[EVO-PIT] Done! Checkout portainer at ::9443."
