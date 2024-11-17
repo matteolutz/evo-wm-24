@@ -5,6 +5,7 @@ services:
     privileged: true
     environment:
       - PORT=80
+      - MEDIA_BASE_DIR=/var/lib/evo-media
       - SERIAL_PORT=${SERIAL_PORT}
       - DISABLE_SERIAL=${DISABLE_SERIAL}
     ports:
@@ -12,6 +13,7 @@ services:
     volumes:
       - server-data:/var/lib/app
       - /dev:/dev
+      - ${EVO_MEDIA}:/var/lib/evo-media
 
 volumes:
   server-data:

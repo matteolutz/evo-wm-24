@@ -20,6 +20,7 @@ import { globalServerState } from './services/state.server';
 import { ALL_TEAMS } from './utils/teams';
 import { REACTION_TEST_QUEUE_TIMEOUT_SECONDS } from './utils/constants';
 import * as childProccess from 'child_process';
+import * as fs from 'fs';
 
 const ABORT_DELAY = 5_000;
 const USE_SERIAL = !process.env.DISABLE_SERIAL;
