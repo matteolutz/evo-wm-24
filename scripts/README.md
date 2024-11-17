@@ -6,6 +6,8 @@
 cp start.sh /home/pi/start.sh
 ```
 
+Update `cd /home/matteolutz` in `start.sh´ to the correct home directory.
+
 ### Add `start.sh` to `rc.local`
 Add the following line to `/etc/rc.local` before `exit 0`:
 ```bash
