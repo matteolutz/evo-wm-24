@@ -1,5 +1,4 @@
 import type { MetaFunction } from '@remix-run/node';
-import { Link } from '@remix-run/react';
 import EvoLink from '~/components/evo/evoLink';
 
 export const meta: MetaFunction = () => {
@@ -21,6 +20,8 @@ const Index = () => {
         <div className="absolute top-0 left-0 z-10 w-full h-full flex justify-center items-center flex-col gap-2">
           <EvoLink to="/reaction">Reaction</EvoLink>
           <EvoLink to="/game">Mobile Game Leaderboard</EvoLink>
+          <EvoLink to="/content/1">Content Test</EvoLink>
+          <EvoLink to="/video/1">Video Test</EvoLink>
         </div>
       </div>
     </div>

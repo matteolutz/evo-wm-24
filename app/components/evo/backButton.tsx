@@ -6,7 +6,7 @@ import EvoLink from './evoLink';
 
 export interface BackButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  to: string;
+  to?: string;
 }
 
 const BackButton = React.forwardRef<HTMLButtonElement, BackButtonProps>(
