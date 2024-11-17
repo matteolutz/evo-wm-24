@@ -30,6 +30,8 @@ const randomString = (n: number) =>
 
 export let serial: SerialReactionTest | undefined;
 
+console.log('[EVO-PIT] Starting server...');
+
 USE_SERIAL &&
   (async () => {
     const port =
@@ -41,7 +43,7 @@ USE_SERIAL &&
           p.manufacturer.includes('Arduino')
       ).path;
 
-    console.log(`Using serial port: ${port}..`);
+    console.log(`[EVO-PIT][SERIAL] Using serial port: ${port}..`);
 
     serial = new SerialReactionTest(port);
     serial.addStateChangeListener((state) => {

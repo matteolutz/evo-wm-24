@@ -11,7 +11,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   const { id, tag } = data;
 
-  console.log(`Received data from ${id}:`);
+  console.log(`[EVO-PIT][NFC] Received data from ${id}:`);
   console.log(tag);
 
   const page = tag in NFC_LUT ? NFC_LUT[tag] : null;

@@ -79,12 +79,12 @@ export class SerialReactionTest {
   ): void {
     switch (packetType as RemoteSerialPacketType) {
       case RemoteSerialPacketType.Handshake:
-        console.log('Handshake received', payload);
+        console.log('[EVO-PIT][SERIAL] Handshake received', payload);
         this.sendBasicSerialPacket(SerialPacketType.Handshake, 0x0);
         this._updateState({ state: 'idle' });
         break;
       case RemoteSerialPacketType.HandshakeAck:
-        console.log('Handshake ack received', payload);
+        console.log('[EVO-PIT][SERIAL] Handshake ack received', payload);
         this._updateState({ state: 'idle' });
         break;
       case RemoteSerialPacketType.StartReaction:
@@ -106,7 +106,7 @@ export class SerialReactionTest {
         this._updateState({ state: 'lights-out' });
         break;
       default:
-        console.log('Unknown packet type', packetType);
+        console.log('[EVO-PIT][SERIAL] Unknown packet type', packetType);
         this._updateState({ state: 'idle' });
     }
   }
