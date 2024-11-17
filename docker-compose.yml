@@ -1,7 +1,7 @@
 services:
   server:
     build: .
-    restart: always
+    restart: on-failure
     privileged: true
     environment:
       - PORT=80
