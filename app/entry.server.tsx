@@ -19,6 +19,7 @@ import { SerialPort } from 'serialport';
 import { globalServerState } from './services/state.server';
 import { ALL_TEAMS } from './utils/teams';
 import { REACTION_TEST_QUEUE_TIMEOUT_SECONDS } from './utils/constants';
+import * as childProccess from 'child_process';
 
 const ABORT_DELAY = 5_000;
 const USE_SERIAL = !process.env.DISABLE_SERIAL;
@@ -31,6 +32,16 @@ const randomString = (n: number) =>
 export let serial: SerialReactionTest | undefined;
 
 console.log('[EVO-PIT] Starting server...');
+try {
+  childProccess.exec(
+    'git rev-parse HEAD && git log -1 --format=%cd',
+    (err, stdout) =>
+      err === null &&
+      console.log(`[EVO-PIT] Last commit info: ${stdout.trim()}`)
+  );
+} catch {
+  /* empty */
+}
 
 USE_SERIAL &&
   (async () => {
