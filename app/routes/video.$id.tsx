@@ -29,16 +29,20 @@ const VideoPage: FC = () => {
           ref={setVideoRef}
           className="absolute top-0 left-0 size-full object-cover object-center blur-sm"
           loop
-          src={`/api/media/video/${id}.mp4`}
-        />
+        >
+          <source src={`/api/media/video/${id}.mp4`} type="video/mp4" />
+          <source src={`/api/media/video/${id}.mov`} type="video/mp4" />
+        </video>
         {/* eslint-disable-next-line jsx-a11y/media-has-caption */};
         <video
           ref={setVideoRef}
           className="absolute top-0 left-1/2 -translate-x-1/2 h-full object-contain shadow-2xl"
           loop
           autoPlay
-          src={`/api/media/video/${id}.mp4`}
-        />
+        >
+          <source src={`/api/media/video/${id}.mp4`} type="video/mp4" />
+          <source src={`/api/media/video/${id}.mov`} type="video/mp4" />
+        </video>
         {!isVideoPlaying && (
           <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center">
             <Button onClick={() => videoRef?.play()} size="icon">
