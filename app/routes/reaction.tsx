@@ -280,7 +280,7 @@ const Reaction = () => {
                 onOpenChange={setDialogOpen.bind(this)}
               >
                 <DialogTrigger asChild>
-                  <Button disabled={reactionTestState.busy} variant="link">
+                  <Button disabled={reactionTestState.busy}>
                     Test your reaction!
                   </Button>
                 </DialogTrigger>
@@ -307,9 +307,8 @@ const Reaction = () => {
                               right next to you to find out how good your
                               reaction is.
                               <br />
-                              If you want, you can enter you name (and team)
-                              right here, so that your result will be displayed
-                              on the leaderboard.
+                              You may choose to enter your name (and team) below
+                              to have your results displayed on the leaderboard.
                             </DialogDescription>
                           )}
                       </DialogHeader>
