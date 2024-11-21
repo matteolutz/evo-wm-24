@@ -4,12 +4,15 @@ import { FC, useEffect, useState } from 'react';
 import BackButton from '~/components/evo/backButton';
 import EvoWavePattern from '~/components/evo/evoWave';
 import { Button } from '~/components/ui/button';
+import { useVolume } from '~/hooks/volume';
 
 const VideoPage: FC = () => {
   const [videoRef, setVideoRef] = useState<HTMLVideoElement | null>(null);
   const [backgroundVideoRef, setBackgroundVideoRef] =
     useState<HTMLVideoElement | null>(null);
   const [isVideoPlaying, setVideoPlaying] = useState(false);
+
+  const [videoVolume, setVideoVolume] = useVolume(videoRef);
 
   const { id } = useParams();
 
@@ -67,7 +70,10 @@ const VideoPage: FC = () => {
         )}
       </div>
       <BackButton />
-      <EvoWavePattern />
+      <EvoWavePattern
+        volume={videoVolume}
+        onVolumeChange={setVideoVolume.bind(this)}
+      />
     </div>
   );
 };

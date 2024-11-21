@@ -18,6 +18,7 @@ import { useEffect } from 'react';
 import { NFCEmitterMessage } from './types/emitter';
 import useEvoNavigate from './hooks/useEvoNavigate';
 import { evoGradient } from './utils/gradient';
+import CopyrightOverlay from './components/matteolutz/copyright';
 
 export const ErrorBoundary = () => {
   return (
@@ -56,6 +57,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body className="w-screen h-screen">
         <GlobalLoader />
         {children}
+        <CopyrightOverlay />
         <ScrollRestoration />
         <Scripts />
       </body>

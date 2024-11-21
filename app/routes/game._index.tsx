@@ -20,7 +20,7 @@ const Game = () => {
             key={idx}
             to={'' + idx}
           >
-            <Card className="size-full overflow-hidden flex flex-col">
+            <Card className="size-full overflow-hidden flex flex-col border-none">
               <img src={track.image} alt={track.name} />
               <div className="w-full h-full p-4">
                 <h2 className="text-xl">{track.name}</h2>

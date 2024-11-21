@@ -61,7 +61,9 @@ export default {
           '"Segoe UI Emoji"',
           '"Segoe UI Symbol"',
           '"Noto Color Emoji"'
-        ]
+        ],
+        f1: ['"F1"', 'sans-serif'],
+        highrise: ['"Highrise"', 'sans-serif']
       },
       borderRadius: {
         lg: 'var(--radius)',

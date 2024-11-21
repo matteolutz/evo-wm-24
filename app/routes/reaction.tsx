@@ -48,7 +48,6 @@ import {
   TableRow
 } from '~/components/ui/table';
 import { cn } from '~/lib/utils';
-import { dbReactionTimes } from '~/services/db.server';
 import { ReactionEmitterMessage } from '~/types/emitter';
 import { ALL_TEAMS, getTeamByName } from '~/utils/teams';
 import groupBy from '~/utils/group';
@@ -63,10 +62,11 @@ import ConfettiExplosion from 'react-confetti-explosion';
 import EvoKeyboard from '~/components/evo/evoKeyboard';
 import { evoGradient } from '~/utils/gradient';
 import useNFCReaderId from '~/hooks/useNFCReaderId';
+import { db } from '~/services/db.server';
 
 export const loader = async () => {
   return json({
-    reactions: dbReactionTimes.chain().find().simplesort('time').data(),
+    reactions: db.data.reactionTimes.sort((a, b) => a.time - b.time),
     sseUrl: '/sse/reaction'
   });
 };
@@ -183,8 +183,6 @@ const Reaction = () => {
         // revalidate();
 
         formRef.current?.reset();
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
         reactions.push(message.timeEntry);
         break;
       // eslint-disable-next-line no-fallthrough
@@ -387,25 +385,53 @@ const Reaction = () => {
                                   </SelectTrigger>
                                   <SelectContent>
                                     <SelectItem value="none">None</SelectItem>
-                                    <SelectSeparator />
                                     {Array.from(
                                       groupBy(
                                         ALL_TEAMS,
                                         (t) => t.country
                                       ).entries()
-                                    ).map(([country, teams]) => (
-                                      <SelectGroup key={country}>
-                                        <SelectLabel>{country}</SelectLabel>
-                                        {teams.map((t) => (
-                                          <SelectItem
-                                            key={t.name}
-                                            value={t.name}
+                                    )
+                                      .sort(([countryA], [countryB]) =>
+                                        countryA.localeCompare(countryB)
+                                      )
+                                      .map(([country, teams]) => (
+                                        <>
+                                          <SelectSeparator />
+                                          <SelectGroup
+                                            className="py-2"
+                                            key={country}
                                           >
-                                            {t.name}
-                                          </SelectItem>
-                                        ))}
-                                      </SelectGroup>
-                                    ))}
+                                            <SelectLabel>{country}</SelectLabel>
+                                            {teams
+                                              .sort(
+                                                (
+                                                  { name: teamAName },
+                                                  { name: teamBName }
+                                                ) =>
+                                                  teamAName.localeCompare(
+                                                    teamBName
+                                                  )
+                                              )
+                                              .map((t) => (
+                                                <SelectItem
+                                                  key={t.name}
+                                                  value={t.name}
+                                                >
+                                                  <div className="flex flex-row items-center gap-2">
+                                                    <span>{t.name}</span>
+                                                    <span
+                                                      style={{
+                                                        backgroundColor:
+                                                          t.cssColor
+                                                      }}
+                                                      className="w-[10px] h-[10px] rounded-full block"
+                                                    ></span>
+                                                  </div>
+                                                </SelectItem>
+                                              ))}
+                                          </SelectGroup>
+                                        </>
+                                      ))}
                                   </SelectContent>
                                 </Select>
                               </div>

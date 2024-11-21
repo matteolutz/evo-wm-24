@@ -10,7 +10,7 @@ import {
   Video
 } from 'lucide-react';
 import EvoLink from '~/components/evo/evoLink';
-import { Card } from '~/components/ui/card';
+import { Card, CardHeader } from '~/components/ui/card';
 import useNFCReaderId from '~/hooks/useNFCReaderId';
 import { evoGradient } from '~/utils/gradient';
 
@@ -22,6 +22,7 @@ const links: Array<{
   to: string;
   title: string | JSX.Element;
   icon: JSX.Element;
+  image?: string;
 }> = [
   {
     to: '/innovations',
@@ -31,7 +32,8 @@ const links: Array<{
   {
     to: '/manifacturing',
     title: 'Manifacturing Methods',
-    icon: <Hammer />
+    icon: <Hammer />,
+    image: '/assets/png/cards/manifacturing.png'
   },
   {
     to: '/video/1',
@@ -41,7 +43,8 @@ const links: Array<{
   {
     to: '/soundtrack',
     title: 'Evolut1on Soundtrack',
-    icon: <Music />
+    icon: <Music />,
+    image: '/assets/png/cards/soundtrack.png'
   },
   {
     to: '/car3d',
@@ -50,22 +53,26 @@ const links: Array<{
         <span className="text-primary">evo-APEX</span> Exploration
       </>
     ),
-    icon: <Rotate3D />
+    icon: <Rotate3D />,
+    image: '/assets/png/cards/car3d.png'
   },
   {
     to: '/reaction',
     title: 'Reaction Test',
-    icon: <Timer />
+    icon: <Timer />,
+    image: '/assets/png/cards/reaction.png'
   },
   {
     to: '/marketing',
     title: 'Marketing Interviews',
-    icon: <ListVideo />
+    icon: <ListVideo />,
+    image: '/assets/png/cards/marketing.png'
   },
   {
     to: '/team',
     title: 'Team',
-    icon: <ListVideo />
+    icon: <ListVideo />,
+    image: '/assets/png/cards/team.png'
   },
   {
     to: '/game',
@@ -74,7 +81,8 @@ const links: Array<{
         <span>evoracer</span> Leaderboard
       </>
     ),
-    icon: <Gamepad />
+    icon: <Gamepad />,
+    image: '/assets/png/cards/game.png'
   }
 ];
 
@@ -87,27 +95,59 @@ const Index = () => {
         }}
         className="blueprint size-full"
       >
-        <div className="absolute top-[10rem] left-20 right-20 bottom-[6rem] z-10 grid grid-cols-3 grid-flow-row items-center justify-center">
+        <div className="absolute top-[10rem] left-20 right-20 bottom-[4rem] z-10 grid grid-cols-3 grid-flow-row items-center justify-center">
           {links.map((l) => (
             <EvoLink
               className="flex justify-center items-center"
               key={l.to}
               to={l.to}
             >
-              <Card className="aspect-[5/2.5] h-[10rem] flex justify-center items-center gap-4 p-4">
-                {l.icon}
-                <h2 className="text-2xl w-min">{l.title}</h2>
+              <Card className="aspect-[5/2.5] h-[10rem] transition-transform hover:scale-105 overflow-hidden border-none">
+                <CardHeader className="w-full h-full relative space-y-0">
+                  <div className="flex flex-col gap-4">
+                    {l.icon}{' '}
+                    <h2 className="font-highrise text-4xl w-min">{l.title}</h2>{' '}
+                  </div>
+                  <div className="absolute right-0 top-0 w-[60%] h-full">
+                    <div
+                      style={{
+                        backgroundImage:
+                          'linear-gradient(270deg, rgba(0, 0, 0, 0), rgba(255, 255, 255, 255))'
+                      }}
+                      className="absolute block w-full h-full"
+                    />
+                    <img
+                      src={l.image}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </CardHeader>
               </Card>
             </EvoLink>
           ))}
         </div>
-        <div className="absolute top-0 left-0 w-full p-8 flex flex-col gap-2">
+        <div className="absolute z-[5] top-0 left-0 w-full p-8 flex flex-col gap-2">
           <img
             src="/assets/svg/evolut1on-fullwhite_2.svg"
             className="max-w-[20rem] w-1/4"
             alt=""
           />
-          <h1 className="text-white">World Finals Saudi-Arabia 24</h1>
+          <div className="flex gap-2 items-center">
+            <img
+              className="h-[1.75rem] bg-[#1581db] border-white border p-2 rounded"
+              src="/assets/svg/aramco.svg"
+              alt=""
+            />
+            <img
+              className="h-[1.75rem] bg-white p-2 rounded"
+              src="/assets/svg/f1-schools.svg"
+              alt=""
+            />
+            <h1 className="text-white ml-1 font-f1 text-sm italic">
+              World Finals
+            </h1>
+          </div>
         </div>
       </div>
     </div>

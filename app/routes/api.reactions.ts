@@ -1,5 +1,5 @@
 import { json } from '@remix-run/react';
-import { dbReactionTimes } from '~/services/db.server';
+import { db } from '~/services/db.server';
 
 export const loader = () =>
-  json(dbReactionTimes.chain().find().simplesort('time').data());
+  json(db.data.reactionTimes.sort((a, b) => a.time - b.time));

@@ -8,6 +8,7 @@ services:
       - MEDIA_BASE_DIR=/var/lib/evo-media
       - SERIAL_PORT=${SERIAL_PORT}
       - DISABLE_SERIAL=${DISABLE_SERIAL}
+      - DB_HOME=/var/lib/app
     ports:
       - '80:80'
     volumes:

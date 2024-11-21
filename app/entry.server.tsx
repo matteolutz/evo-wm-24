@@ -12,7 +12,6 @@ import { RemixServer } from '@remix-run/react';
 import { isbot } from 'isbot';
 import { renderToPipeableStream } from 'react-dom/server';
 import { reactionEmitter } from './services/emitter.server';
-import { dbReactionTimes } from './services/db.server';
 import { SerialReactionTest } from './services/serial.server';
 import { ReactionEmitterMessage } from './types/emitter';
 import { SerialPort } from 'serialport';
@@ -20,12 +19,12 @@ import { globalServerState } from './services/state.server';
 import { ALL_TEAMS } from './utils/teams';
 import { REACTION_TEST_QUEUE_TIMEOUT_SECONDS } from './utils/constants';
 import * as childProccess from 'child_process';
-import * as fs from 'fs';
+import { db } from './services/db.server';
 
 const ABORT_DELAY = 5_000;
 const USE_SERIAL = !process.env.DISABLE_SERIAL;
 const SERIAL_PORT = process.env.SERIAL_PORT;
-const AUTO_FILL_LEADERBOARD = false;
+const REACTION_LEADERBOARD_DEBUG = !!process.env.REACTION_LEADERBOARD_DEBUG;
 
 const randomString = (n: number) =>
   [...Array(n)].map(() => Math.random().toString(36)[2]).join('');
@@ -90,13 +89,17 @@ USE_SERIAL &&
             break;
           }
 
-          // user finished the reaction test, publish it
-          const timeEntry = dbReactionTimes.insert({
+          const entry = {
             username: globalServerState.currentReactionTest.user.name,
             team: globalServerState.currentReactionTest.user.teamName,
             // save the time in seconds
             time: state.timeInMicros / 1_000_000.0,
             createdAt: Date.now()
+          };
+
+          // user finished the reaction test, publish it
+          const timeEntry = db.update(({ reactionTimes }) => {
+            reactionTimes.push(entry);
           })!;
 
           globalServerState.currentReactionTest = {
@@ -132,11 +135,13 @@ USE_SERIAL &&
   })();
 
 const tick = () => {
-  dbReactionTimes.insert({
-    username: randomString(5),
-    time: Math.random(),
-    team: ALL_TEAMS[Math.floor(Math.random() * ALL_TEAMS.length)].name,
-    createdAt: Date.now()
+  db.update(({ reactionTimes }) => {
+    reactionTimes.push({
+      username: randomString(5),
+      time: Math.random(),
+      team: ALL_TEAMS[Math.floor(Math.random() * ALL_TEAMS.length)].name,
+      createdAt: Date.now()
+    });
   });
 
   reactionEmitter.emit('message', {
@@ -144,7 +149,7 @@ const tick = () => {
   } satisfies ReactionEmitterMessage);
 };
 
-AUTO_FILL_LEADERBOARD && setInterval(tick, 5000);
+REACTION_LEADERBOARD_DEBUG && setInterval(tick, 5000);
 
 export default function handleRequest(
   request: Request,

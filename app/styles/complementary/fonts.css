@@ -1,53 +1,84 @@
 @layer base {
+  /* Ubuntu */
   @font-face {
-    font-family: "Ubuntu";
+    font-family: 'Ubuntu';
     font-weight: 400;
-    src: url("/assets/fonts/Ubuntu/Ubuntu-Regular.ttf");
+    src: url('/assets/fonts/Ubuntu/Ubuntu-Regular.ttf');
   }
 
   @font-face {
-    font-family: "Ubuntu";
+    font-family: 'Ubuntu';
     font-weight: 500;
-    src: url("/assets/fonts/Ubuntu/Ubuntu-Medium.ttf");
+    src: url('/assets/fonts/Ubuntu/Ubuntu-Medium.ttf');
   }
 
   @font-face {
-    font-family: "Ubuntu";
+    font-family: 'Ubuntu';
     font-weight: 700;
-    src: url("/assets/fonts/Ubuntu/Ubuntu-Bold.ttf");
+    src: url('/assets/fonts/Ubuntu/Ubuntu-Bold.ttf');
   }
 
   @font-face {
-    font-family: "Ubuntu";
+    font-family: 'Ubuntu';
     font-style: italic;
     font-weight: 400;
-    src: url("/assets/fonts/Ubuntu/Ubuntu-Italic.ttf");
+    src: url('/assets/fonts/Ubuntu/Ubuntu-Italic.ttf');
   }
 
   @font-face {
-    font-family: "Ubuntu";
+    font-family: 'Ubuntu';
     font-style: italic;
     font-weight: 500;
-    src: url("/assets/fonts/Ubuntu/Ubuntu-MediumItalic.ttf");
+    src: url('/assets/fonts/Ubuntu/Ubuntu-MediumItalic.ttf');
   }
 
   @font-face {
-    font-family: "Ubuntu";
+    font-family: 'Ubuntu';
     font-style: italic;
     font-weight: 700;
-    src: url("/assets/fonts/Ubuntu/Ubuntu-BoldItalic.ttf");
+    src: url('/assets/fonts/Ubuntu/Ubuntu-BoldItalic.ttf');
   }
 
   @font-face {
-    font-family: "Ubuntu";
+    font-family: 'Ubuntu';
     font-weight: 300;
-    src: url("/assets/fonts/Ubuntu/Ubuntu-Light.ttf");
+    src: url('/assets/fonts/Ubuntu/Ubuntu-Light.ttf');
   }
 
   @font-face {
-    font-family: "Ubuntu";
+    font-family: 'Ubuntu';
     font-style: italic;
     font-weight: 300;
-    src: url("/assets/fonts/Ubuntu/Ubuntu-LightItalic.ttf");
+    src: url('/assets/fonts/Ubuntu/Ubuntu-LightItalic.ttf');
+  }
+
+  /* F1 */
+  @font-face {
+    font-family: 'F1';
+    font-style: normal;
+    font-weight: 400;
+    src: url('/assets/fonts/F1/Formula1-Regular.otf');
+  }
+
+  @font-face {
+    font-family: 'F1';
+    font-style: normal;
+    font-weight: 700;
+    src: url('/assets/fonts/F1/Formula1-Bold.otf');
+  }
+
+  @font-face {
+    font-family: 'F1';
+    font-style: italic;
+    font-weight: 400;
+    src: url('/assets/fonts/F1/Formula1-Wide.otf');
+  }
+
+  /* Highrise */
+  @font-face {
+    font-family: 'Highrise';
+    font-style: normal;
+    font-weight: 400;
+    src: url('/assets/fonts/Highrise/HighriseFont-Demo-Regular.otf');
   }
 }

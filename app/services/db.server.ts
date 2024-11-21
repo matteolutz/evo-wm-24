@@ -1,6 +1,9 @@
-import loki from 'lokijs';
 import { ReactionTimeEntry } from '~/types/db';
+import { JSONFileSyncPreset } from 'lowdb/node';
+import * as path from 'path';
 
-export const db = new loki('db.db');
-export const dbReactionTimes =
-  db.addCollection<ReactionTimeEntry>('reactionTimes');
+const DB_HOME = process.env.DB_HOME || '.';
+
+export const db = JSONFileSyncPreset<{
+  reactionTimes: Array<ReactionTimeEntry>;
+}>(path.join(DB_HOME, 'db.json'), { reactionTimes: [] });
