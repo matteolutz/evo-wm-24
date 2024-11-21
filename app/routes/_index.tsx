@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 import EvoLink from '~/components/evo/evoLink';
 import { Card } from '~/components/ui/card';
+import useNFCReaderId from '~/hooks/useNFCReaderId';
+import { evoGradient } from '~/utils/gradient';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'evolut1on' }];
@@ -79,7 +81,12 @@ const links: Array<{
 const Index = () => {
   return (
     <div className="size-full">
-      <div className="blueprint size-full bg-evo-orange">
+      <div
+        style={{
+          backgroundImage: evoGradient(useNFCReaderId())
+        }}
+        className="blueprint size-full"
+      >
         <div className="absolute top-[10rem] left-20 right-20 bottom-[6rem] z-10 grid grid-cols-3 grid-flow-row items-center justify-center">
           {links.map((l) => (
             <EvoLink

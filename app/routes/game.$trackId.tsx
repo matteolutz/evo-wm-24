@@ -17,9 +17,11 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table';
+import useNFCReaderId from '~/hooks/useNFCReaderId';
 import { cn } from '~/lib/utils';
 import { trackLeaderboardCache } from '~/services/cache.server';
 import { ALL_TRACKS, GameTrack, GameTrackLeaderboardEntry } from '~/utils/game';
+import { evoGradient } from '~/utils/gradient';
 
 type LoaderReturn = {
   leaderboard:
@@ -84,7 +86,10 @@ const GameTrackLeaderboard = () => {
   return (
     <div className="w-screen h-screen">
       <BackButton to="/game" />
-      <div className="blueprint size-full bg-evo-orange flex flex-col items-center gap-8 p-8"></div>
+      <div
+        className="blueprint size-full flex flex-col items-center gap-8 p-8"
+        style={{ backgroundImage: evoGradient(useNFCReaderId()) }}
+      />
       <div className="absolute top-0 left-0 z-10 w-full h-full flex items-center flex-col gap-8 p-8">
         <Card className="shadow-lg">
           <CardHeader>

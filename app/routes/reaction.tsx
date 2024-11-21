@@ -61,6 +61,8 @@ import { REACTION_TEST_QUEUE_TIMEOUT_SECONDS } from '~/utils/constants';
 import StopWatch from '~/components/evo/stopWatch';
 import ConfettiExplosion from 'react-confetti-explosion';
 import EvoKeyboard from '~/components/evo/evoKeyboard';
+import { evoGradient } from '~/utils/gradient';
+import useNFCReaderId from '~/hooks/useNFCReaderId';
 
 export const loader = async () => {
   return json({
@@ -181,6 +183,8 @@ const Reaction = () => {
         // revalidate();
 
         formRef.current?.reset();
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         reactions.push(message.timeEntry);
         break;
       // eslint-disable-next-line no-fallthrough
@@ -237,7 +241,10 @@ const Reaction = () => {
   return (
     <div className="w-screen h-screen">
       <BackButton to="/" />
-      <div className="blueprint size-full bg-evo-orange flex flex-col items-center gap-8 p-8"></div>
+      <div
+        className="blueprint size-full flex flex-col items-center gap-8 p-8"
+        style={{ backgroundImage: evoGradient(useNFCReaderId()) }}
+      />
       <div className="absolute top-0 left-0 z-10 w-full h-full flex items-center flex-col gap-8 p-8">
         <Card className="shadow-lg">
           <CardHeader>

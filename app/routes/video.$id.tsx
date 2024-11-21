@@ -7,6 +7,8 @@ import { Button } from '~/components/ui/button';
 
 const VideoPage: FC = () => {
   const [videoRef, setVideoRef] = useState<HTMLVideoElement | null>(null);
+  const [backgroundVideoRef, setBackgroundVideoRef] =
+    useState<HTMLVideoElement | null>(null);
   const [isVideoPlaying, setVideoPlaying] = useState(false);
 
   const { id } = useParams();
@@ -21,14 +23,27 @@ const VideoPage: FC = () => {
     return () => videoRef.removeEventListener('play', onPlay);
   }, [videoRef]);
 
+  useEffect(() => {
+    if (!backgroundVideoRef || !videoRef) return;
+    backgroundVideoRef.currentTime = videoRef.currentTime;
+
+    if (isVideoPlaying) {
+      backgroundVideoRef.play();
+      return;
+    }
+
+    backgroundVideoRef.pause();
+  }, [isVideoPlaying]);
+
   return (
     <div className="size-full relative overflow-hidden bg-black">
       <div className="h-full relative">
         {/* eslint-disable-next-line jsx-a11y/media-has-caption */};
         <video
-          ref={setVideoRef}
-          className="absolute top-0 left-0 size-full object-cover object-center blur-sm"
+          ref={setBackgroundVideoRef}
+          className="absolute top-0 left-0 size-full object-cover object-center blur-lg"
           loop
+          muted
         >
           <source src={`/api/media/video/${id}.mp4`} type="video/mp4" />
           <source src={`/api/media/video/${id}.mov`} type="video/mp4" />

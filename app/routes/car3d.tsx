@@ -1,5 +1,3 @@
-import { useNavigation } from '@remix-run/react';
-import { Undo } from 'lucide-react';
 import { FC, useState } from 'react';
 import BackButton from '~/components/evo/backButton';
 import EvoWavePattern from '~/components/evo/evoWave';

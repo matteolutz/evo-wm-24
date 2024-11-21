@@ -2,6 +2,8 @@ import { FC } from 'react';
 import BackButton from '~/components/evo/backButton';
 import EvoLink from '~/components/evo/evoLink';
 import { Card } from '~/components/ui/card';
+import useNFCReaderId from '~/hooks/useNFCReaderId';
+import { evoGradient } from '~/utils/gradient';
 
 const MARKETING_INTERVIEWS: Array<{
   company: string;
@@ -29,7 +31,10 @@ const MarketingPage: FC = () => {
   return (
     <div className="w-screen h-screen">
       <BackButton to="/" />
-      <div className="blueprint size-full bg-evo-orange flex flex-col items-center gap-8 p-8"></div>
+      <div
+        className="blueprint size-full flex flex-col items-center gap-8 p-8"
+        style={{ backgroundImage: evoGradient(useNFCReaderId()) }}
+      />
       <div className="absolute top-0 left-0 z-10 w-full h-full flex justify-center items-center gap-8 p-8">
         {MARKETING_INTERVIEWS.map((interview, idx) => (
           <EvoLink

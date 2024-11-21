@@ -3,9 +3,7 @@ import {
   Meta,
   Outlet,
   Scripts,
-  ScrollRestoration,
-  useNavigate,
-  useSearchParams
+  ScrollRestoration
 } from '@remix-run/react';
 
 import './styles/tailwind.css';
@@ -19,16 +17,20 @@ import useNFCReaderId from './hooks/useNFCReaderId';
 import { useEffect } from 'react';
 import { NFCEmitterMessage } from './types/emitter';
 import useEvoNavigate from './hooks/useEvoNavigate';
+import { evoGradient } from './utils/gradient';
 
 export const ErrorBoundary = () => {
   return (
     <Layout>
       <div className="w-screen h-screen">
-        <div className="blueprint size-full bg-evo-orange flex flex-col items-center gap-8 p-8"></div>
+        <div
+          className="blueprint size-full flex flex-col items-center gap-8 p-8"
+          style={{ backgroundImage: evoGradient(useNFCReaderId()) }}
+        />
         <div className="absolute top-0 left-0 z-10 w-full h-full flex justify-center items-center flex-col gap-8 p-8">
           <Card className="p-8">
             <Alert variant="destructive" className="border-2">
-              <AlertTitle>Oops! Something went wrong</AlertTitle>
+              <AlertTitle>Oops! Something went wrong.</AlertTitle>
               <AlertDescription>
                 <Button variant="link" asChild>
                   <EvoLink to="/">Take be back to evolut1on</EvoLink>
