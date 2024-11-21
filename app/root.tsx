@@ -19,6 +19,7 @@ import { NFCEmitterMessage } from './types/emitter';
 import useEvoNavigate from './hooks/useEvoNavigate';
 import { evoGradient } from './utils/gradient';
 import CopyrightOverlay from './components/matteolutz/copyright';
+import InfoModalContextProvider from './hooks/modal';
 
 export const ErrorBoundary = () => {
   return (
@@ -56,7 +57,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className="w-screen h-screen">
         <GlobalLoader />
-        {children}
+        <InfoModalContextProvider>{children}</InfoModalContextProvider>
         <CopyrightOverlay />
         <ScrollRestoration />
         <Scripts />

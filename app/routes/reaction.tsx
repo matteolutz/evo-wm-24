@@ -63,6 +63,8 @@ import EvoKeyboard from '~/components/evo/evoKeyboard';
 import { evoGradient } from '~/utils/gradient';
 import useNFCReaderId from '~/hooks/useNFCReaderId';
 import { db } from '~/services/db.server';
+import { getForegroundColor } from '~/hooks/color';
+import { useInfoModalContext } from '~/hooks/modal';
 
 export const loader = async () => {
   return json({
@@ -154,6 +156,8 @@ const Reaction = () => {
   const serverMessage = useEventSource(sseUrl);
 
   const actionData = useActionData<typeof action>();
+
+  const modal = useInfoModalContext();
 
   useEffect(() => {
     if (!serverMessage) return;
@@ -485,12 +489,78 @@ const Reaction = () => {
                     <TableCell className="text-lg w-full">
                       {r.username}{' '}
                       {r.team && (
-                        <span
-                          className="ml-2 py-1 px-2 bg-background rounded text-sm border-2"
-                          style={{ color: getTeamByName(r.team)!.cssColor }}
+                        <button
+                          className="ml-2 py-1 px-2 bg-background rounded text-sm cursor-pointer"
+                          onClick={() => {
+                            if (!r.team) return;
+                            const team = getTeamByName(r.team)!;
+                            const teamReactionTests = reactions.filter(
+                              (reaction) => reaction.team === r.team
+                            );
+
+                            const teamAverage =
+                              teamReactionTests.reduce(
+                                (acc, curr) => acc + curr.time,
+                                0
+                              ) / teamReactionTests.length;
+
+                            let teamBest = 0;
+                            for (let i = 1; i < teamReactionTests.length; i++) {
+                              if (
+                                teamReactionTests[i].time <
+                                teamReactionTests[teamBest].time
+                              ) {
+                                teamBest = i;
+                              }
+                            }
+
+                            modal.showInfo({
+                              title: (
+                                <span
+                                  style={{
+                                    backgroundColor: team.cssColor,
+                                    color: getForegroundColor(
+                                      parseInt(team.cssColor.substring(1), 16)
+                                    )
+                                  }}
+                                  className="py-1 px-2 bg-background rounded text-lg"
+                                >
+                                  {team.name}
+                                </span>
+                              ),
+                              message: (
+                                <div className="w-full flex flex-col gap-2 p-2 text-base">
+                                  <div>
+                                    <b>Team best</b>:{' '}
+                                    {(
+                                      teamReactionTests[teamBest].time * 1000
+                                    ).toFixed(2)}
+                                    ms (by{' '}
+                                    {teamReactionTests[teamBest].username})
+                                  </div>
+                                  <div>
+                                    <b>
+                                      Team average (
+                                      <span className="font-mono">μ</span>)
+                                    </b>
+                                    : {(teamAverage * 1000).toFixed(2)}ms
+                                  </div>
+                                </div>
+                              )
+                            });
+                          }}
+                          style={{
+                            backgroundColor: getTeamByName(r.team)!.cssColor,
+                            color: getForegroundColor(
+                              parseInt(
+                                getTeamByName(r.team)!.cssColor.substring(1),
+                                16
+                              )
+                            )
+                          }}
                         >
                           {getTeamByName(r.team)!.name}
-                        </span>
+                        </button>
                       )}
                     </TableCell>
                     <TableCell className="text-center font-normal">

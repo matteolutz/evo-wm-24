@@ -22,7 +22,7 @@ const EvoWavePattern: FC<EvoWavePatternProps> = ({
         alt=""
       />
       <img
-        className="absolute bottom-0 right-0 scale-y-[0.4] origin-bottom-left"
+        className="absolute bottom-0 right-0 scale-y-[0.4] origin-bottom-left w-full"
         src="/assets/svg/evo-wave-bottom.svg"
         alt=""
       />

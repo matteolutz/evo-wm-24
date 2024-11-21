@@ -37,7 +37,7 @@ const EvoKeyboard: FC<EvoKeyboardProps> = ({ htmlFor }) => {
 
   return (
     show && (
-      <div className="absolute bottom-0 left-0 w-full z-[200]">
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[1200px] z-[200]">
         <Keyboard
           onInit={(k) => k.setInput(htmlFor?.value ?? '')}
           onChange={handleChange.bind(this)}

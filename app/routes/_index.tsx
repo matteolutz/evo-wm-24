@@ -103,16 +103,16 @@ const Index = () => {
               to={l.to}
             >
               <Card className="aspect-[5/2.5] h-[10rem] transition-transform hover:scale-105 overflow-hidden border-none">
-                <CardHeader className="w-full h-full relative space-y-0">
-                  <div className="flex flex-col gap-4">
+                <CardHeader className="w-full h-full relative space-y-0 tracking-normal">
+                  <div className="absolute z-[1] top-0 left-0 p-6 flex flex-col gap-4">
                     {l.icon}{' '}
                     <h2 className="font-highrise text-4xl w-min">{l.title}</h2>{' '}
                   </div>
-                  <div className="absolute right-0 top-0 w-[60%] h-full">
+                  <div className="absolute z right-0 top-0 w-[60%] h-full">
                     <div
                       style={{
                         backgroundImage:
-                          'linear-gradient(270deg, rgba(0, 0, 0, 0), rgba(255, 255, 255, 255))'
+                          'linear-gradient(270deg, rgba(0, 0, 0, 0), 40%, rgba(255, 255, 255, 255))'
                       }}
                       className="absolute block w-full h-full"
                     />
