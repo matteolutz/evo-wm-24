@@ -1,5 +1,5 @@
 import { useParams } from '@remix-run/react';
-import { Play } from 'lucide-react';
+import { LoaderCircle, Play } from 'lucide-react';
 import { FC, useEffect, useState } from 'react';
 import BackButton from '~/components/evo/backButton';
 import EvoWavePattern from '~/components/evo/evoWave';
@@ -29,6 +29,11 @@ const VideoPage: FC = () => {
   useEffect(() => {
     if (!backgroundVideoRef || !videoRef) return;
     backgroundVideoRef.currentTime = videoRef.currentTime;
+
+    backgroundVideoRef.addEventListener(
+      'load',
+      () => (backgroundVideoRef.currentTime = videoRef.currentTime)
+    );
 
     if (isVideoPlaying) {
       backgroundVideoRef.play();
@@ -63,9 +68,15 @@ const VideoPage: FC = () => {
         </video>
         {!isVideoPlaying && (
           <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center">
-            <Button onClick={() => videoRef?.play()} size="icon">
-              <Play />
-            </Button>
+            {videoRef?.readyState === 4 ? (
+              <Button onClick={() => videoRef?.play()} size="icon">
+                <Play />
+              </Button>
+            ) : (
+              <div className="p-2 bg-primary rounded">
+                <LoaderCircle className="animate-spin text-white" />
+              </div>
+            )}
           </div>
         )}
       </div>

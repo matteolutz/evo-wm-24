@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import EvoLink from '~/components/evo/evoLink';
 import { Card, CardHeader } from '~/components/ui/card';
+import { TEAM_MAP } from '~/constants/team';
 import useNFCReaderId from '~/hooks/useNFCReaderId';
 import { evoGradient } from '~/utils/gradient';
 
@@ -88,6 +89,7 @@ const links: Array<{
 ];
 
 const Index = () => {
+  console.log(TEAM_MAP['timo']);
   return (
     <div className="size-full">
       <div
@@ -103,7 +105,7 @@ const Index = () => {
               key={l.to}
               to={l.to}
             >
-              <Card className="aspect-[5/2.5] h-[10rem] transition-transform hover:scale-105 overflow-hidden border-none">
+              <Card className="aspect-[5/2.5] h-[10rem] transition-transform hover:scale-105 overflow-hidden border-none shadow-lg">
                 <CardHeader className="w-full h-full relative space-y-0 tracking-normal">
                   <div className="absolute z-[1] top-0 left-0 p-6 flex flex-col gap-4">
                     {l.icon}{' '}
