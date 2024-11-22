@@ -13,7 +13,6 @@ const EvoWavePattern: FC<EvoWavePatternProps> = ({
   volume,
   onVolumeChange
 }) => {
-  console.log(volume);
   return (
     <>
       <img

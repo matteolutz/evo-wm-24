@@ -25,9 +25,21 @@ const links: Array<{
   image?: string;
 }> = [
   {
+    to: '/team',
+    title: 'Team',
+    icon: <ListVideo />,
+    image: '/assets/png/cards/team.png'
+  },
+  {
     to: '/innovations',
     title: 'Innovations',
-    icon: <Lightbulb />
+    icon: <Lightbulb />,
+    image: '/assets/png/cards/innovations.png'
+  },
+  {
+    to: '/video/31',
+    title: 'Car Reveal',
+    icon: <Video />
   },
   {
     to: '/manifacturing',
@@ -36,9 +48,20 @@ const links: Array<{
     image: '/assets/png/cards/manifacturing.png'
   },
   {
-    to: '/video/1',
-    title: 'Car Reveal',
-    icon: <Video />
+    to: '/reaction',
+    title: 'Reaction Test',
+    icon: <Timer />,
+    image: '/assets/png/cards/reaction.png'
+  },
+  {
+    to: '/game',
+    title: (
+      <>
+        <span>evoracer</span> Leaderboard
+      </>
+    ),
+    icon: <Gamepad />,
+    image: '/assets/png/cards/game.png'
   },
   {
     to: '/soundtrack',
@@ -57,32 +80,10 @@ const links: Array<{
     image: '/assets/png/cards/car3d.png'
   },
   {
-    to: '/reaction',
-    title: 'Reaction Test',
-    icon: <Timer />,
-    image: '/assets/png/cards/reaction.png'
-  },
-  {
     to: '/marketing',
     title: 'Marketing Interviews',
     icon: <ListVideo />,
     image: '/assets/png/cards/marketing.png'
-  },
-  {
-    to: '/team',
-    title: 'Team',
-    icon: <ListVideo />,
-    image: '/assets/png/cards/team.png'
-  },
-  {
-    to: '/game',
-    title: (
-      <>
-        <span>evoracer</span> Leaderboard
-      </>
-    ),
-    icon: <Gamepad />,
-    image: '/assets/png/cards/game.png'
   }
 ];
 

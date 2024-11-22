@@ -1,56 +1,45 @@
-import { FC } from 'react';
 import BackButton from '~/components/evo/backButton';
 import EvoLink from '~/components/evo/evoLink';
 import { Card } from '~/components/ui/card';
 import useNFCReaderId from '~/hooks/useNFCReaderId';
 import { evoGradient } from '~/utils/gradient';
 
-const MARKETING_INTERVIEWS: Array<{
-  company: string;
-  logo: string;
-  videoId: number;
+const MANIFACTURING_METHODS: Array<{
+  name: string;
+  contentId: number;
 }> = [
   {
-    company: 'DoubleSlash',
-    logo: '/assets/png/marketing/doubleslash.png',
-    videoId: 20
+    name: 'FDM',
+    contentId: 1
   },
   {
-    company: 'ifm',
-    logo: '/assets/png/marketing/ifm.png',
-    videoId: 21
+    name: 'SLA',
+    contentId: 2
   },
   {
-    company: 'Rolls Royce Power Systems',
-    logo: '/assets/png/marketing/rrps.png',
-    videoId: 22
-  },
-  {
-    company: 'Raditek',
-    logo: '/assets/png/marketing/rrps.png',
-    videoId: 23
+    name: 'MJF',
+    contentId: 3
   }
 ];
 
-const MarketingPage: FC = () => {
+const ManifacturingPage = () => {
   return (
-    <div className="w-screen h-screen">
+    <div className="size-full">
       <BackButton to="/" />
       <div
         className="blueprint size-full flex flex-col items-center gap-8 p-8"
         style={{ backgroundImage: evoGradient(useNFCReaderId()) }}
       />
       <div className="absolute top-0 left-0 z-10 w-full h-full flex justify-center items-center gap-8 p-8">
-        {MARKETING_INTERVIEWS.map((interview, idx) => (
+        {MANIFACTURING_METHODS.map((interview, idx) => (
           <EvoLink
             className="w-[20rem] transition-transform hover:scale-105"
             key={idx}
-            to={`/video/${interview.videoId}`}
+            to={`/content/${interview.contentId}`}
           >
             <Card className="size-full overflow-hidden flex flex-col">
               <div className="w-full h-full p-4 flex gap-2 justify-center items-center">
-                <img className="h-8" src={interview.logo} alt="" />
-                <h2 className="text-xl">{interview.company}</h2>
+                <h2 className="text-xl">{interview.name}</h2>
               </div>
             </Card>
           </EvoLink>
@@ -60,4 +49,4 @@ const MarketingPage: FC = () => {
   );
 };
 
-export default MarketingPage;
+export default ManifacturingPage;

@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import BackButton from '~/components/evo/backButton';
 import EvoWavePattern from '~/components/evo/evoWave';
 import { useVolume } from '~/hooks/volume';
