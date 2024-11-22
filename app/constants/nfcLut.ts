@@ -8,10 +8,10 @@ const NFC_LUT: Record<string, string> = {
   // Manifacturing MJF
   '4b0101004400070481d6ef230289': '/content/3',
 
-  '4b01010044000704d115f5230289': `/content/${TEAM_MAP['benaja']}`,
-  '4b010100440007042188f3230289': `/content/${TEAM_MAP['sebastian']}`,
-  '4b01010044000704b15df7230289': `/content/${TEAM_MAP['timo']}`,
-  '4b01010044000704e16af4230289': `/content/${TEAM_MAP['owen']}`
+  '4b01010044000704d115f5230289': `/video/${TEAM_MAP['benaja']}`,
+  '4b010100440007042188f3230289': `/video/${TEAM_MAP['sebastian']}`,
+  '4b01010044000704b15df7230289': `/video/${TEAM_MAP['timo']}`,
+  '4b01010044000704e16af4230289': `/video/${TEAM_MAP['owen']}`
 };
 
 export default NFC_LUT;
