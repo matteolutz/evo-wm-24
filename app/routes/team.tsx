@@ -3,13 +3,7 @@ import BackButton from '~/components/evo/backButton';
 import EvoLink from '~/components/evo/evoLink';
 import useNFCReaderId from '~/hooks/useNFCReaderId';
 import { evoGradient } from '~/utils/gradient';
-
-const TEAM: Array<{ name: string; videoId: number }> = [
-  { name: 'benaja', videoId: 1 },
-  { name: 'owen', videoId: 2 },
-  { name: 'sebastian', videoId: 3 },
-  { name: 'timo', videoId: 4 }
-];
+import { TEAM } from '../constants/team';
 
 const TeamPage: FC = () => {
   return (
