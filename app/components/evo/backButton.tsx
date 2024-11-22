@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '../ui/button';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Home } from 'lucide-react';
 import { cn } from '~/lib/utils';
 import EvoLink from './evoLink';
 
@@ -12,18 +12,33 @@ export interface BackButtonProps
 const BackButton = React.forwardRef<HTMLButtonElement, BackButtonProps>(
   ({ className, to, ...props }, ref) => {
     return (
-      <Button
-        {...props}
-        ref={ref}
-        className={cn(className, 'fixed', 'top-4', 'left-4', 'z-20')}
-        variant="outline"
-        size="icon"
-        asChild
-      >
-        <EvoLink to={to}>
-          <ChevronLeft />
-        </EvoLink>
-      </Button>
+      <div className="fixed top-4 left-4 flex gap-2 z-20">
+        <Button
+          {...props}
+          ref={ref}
+          className={className}
+          variant="outline"
+          size="icon"
+          asChild
+        >
+          <EvoLink to={to}>
+            <ChevronLeft />
+          </EvoLink>
+        </Button>
+
+        <Button
+          {...props}
+          ref={ref}
+          className={className}
+          variant="outline"
+          size="icon"
+          asChild
+        >
+          <EvoLink to="/">
+            <Home />
+          </EvoLink>
+        </Button>
+      </div>
     );
   }
 );
