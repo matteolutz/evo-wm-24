@@ -23,6 +23,29 @@ import { trackLeaderboardCache } from '~/services/cache.server';
 import { ALL_TRACKS, GameTrack, GameTrackLeaderboardEntry } from '~/utils/game';
 import { evoGradient } from '~/utils/gradient';
 
+const scoreToTimeString = (score: number): string => {
+  const timeInSeconds = score / 10_000;
+
+  // Extract whole minutes
+  const minutes = Math.floor(timeInSeconds / 60);
+
+  // Extract remaining whole seconds
+  const seconds = Math.floor(timeInSeconds % 60);
+
+  // Extract remaining milliseconds
+  const milliseconds = Math.round((timeInSeconds % 1) * 1000);
+
+  // Format minutes and seconds as two digits
+  const formattedMinutes = String(minutes).padStart(2, '0');
+  const formattedSeconds = String(seconds).padStart(2, '0');
+
+  // Format milliseconds as three digits
+  const formattedMilliseconds = String(milliseconds).padStart(3, '0');
+
+  // Combine and return the formatted time
+  return `${formattedMinutes}:${formattedSeconds}.${formattedMilliseconds}`;
+};
+
 type LoaderReturn = {
   leaderboard:
     | {
@@ -136,12 +159,12 @@ const GameTrackLeaderboard = () => {
                 <TableHead className="w-[4rem] text-center">#</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead className="w-[4rem] text-center">At</TableHead>
-                <TableHead className="w-[4rem] text-center">Score</TableHead>
+                <TableHead className="w-[4rem] text-center">Time</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {leaderboard.leaderboard
-                .sort((a, b) => b.Rank - a.Rank)
+                .sort((a, b) => a.Rank - b.Rank)
                 .map((entry, idx) => (
                   <TableRow
                     key={idx}
@@ -164,7 +187,9 @@ const GameTrackLeaderboard = () => {
                         minute: '2-digit'
                       })}
                     </TableCell>
-                    <TableCell className="text-center">{entry.Score}</TableCell>
+                    <TableCell className="text-center">
+                      {scoreToTimeString(entry.Score)}
+                    </TableCell>
                   </TableRow>
                 ))}
             </TableBody>

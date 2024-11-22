@@ -21,13 +21,13 @@ const MARKETING_INTERVIEWS: Array<{
     videoId: 21
   },
   {
-    company: 'Rolls Royce Power Systems',
+    company: 'Rolls Royce PS',
     logo: '/assets/png/marketing/rrps.png',
     videoId: 22
   },
   {
     company: 'Raditek',
-    logo: '/assets/png/marketing/rrps.png',
+    logo: '/assets/png/marketing/raditek.png',
     videoId: 23
   }
 ];
@@ -50,7 +50,7 @@ const MarketingPage: FC = () => {
             <Card className="size-full overflow-hidden flex flex-col">
               <div className="w-full h-full p-4 flex gap-2 justify-center items-center">
                 <img className="h-8" src={interview.logo} alt="" />
-                <h2 className="text-xl">{interview.company}</h2>
+                <h2 className="text-2xl">{interview.company}</h2>
               </div>
             </Card>
           </EvoLink>

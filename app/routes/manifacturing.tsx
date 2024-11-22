@@ -39,7 +39,7 @@ const ManifacturingPage = () => {
           >
             <Card className="size-full overflow-hidden flex flex-col">
               <div className="w-full h-full p-4 flex gap-2 justify-center items-center">
-                <h2 className="text-xl">{interview.name}</h2>
+                <h2 className="text-2xl">{interview.name}</h2>
               </div>
             </Card>
           </EvoLink>
