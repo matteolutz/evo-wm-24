@@ -89,7 +89,7 @@ USE_SERIAL &&
             break;
           }
 
-          const entry = {
+          const timeEntry = {
             username: globalServerState.currentReactionTest.user.name,
             team: globalServerState.currentReactionTest.user.teamName,
             // save the time in seconds
@@ -98,8 +98,8 @@ USE_SERIAL &&
           };
 
           // user finished the reaction test, publish it
-          const timeEntry = db.update(({ reactionTimes }) => {
-            reactionTimes.push(entry);
+          db.update(({ reactionTimes }) => {
+            reactionTimes.push(timeEntry);
           })!;
 
           globalServerState.currentReactionTest = {
