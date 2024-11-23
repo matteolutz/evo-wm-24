@@ -15,7 +15,7 @@ const SoundtrackPage: FC = () => {
         onVolumeChange={setAudioVolume.bind(this)}
       />
       <div className="size-full overflow-y-scroll py-20">
-        <img className="w-full" src={`/api/media/content/0.png`} alt="" />
+        <img className="w-full" src={`/api/media/content/20.png`} alt="" />
       </div>
       {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
       <audio

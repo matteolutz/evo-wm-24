@@ -39,8 +39,9 @@ const links: Array<{
   },
   {
     to: '/video/31',
-    title: 'Car Reveal',
-    icon: <Video />
+    title: 'Car-Reveal Teaser',
+    icon: <Video />,
+    image: '/assets/png/cards/carreveal.png'
   },
   {
     to: '/manifacturing',
