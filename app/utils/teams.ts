@@ -4,7 +4,24 @@ export type Team = {
   country: string;
 };
 
+const OFFICIALS_COUNTRY = '#Officials';
+
 export const ALL_TEAMS: Array<Team> = [
+  {
+    country: OFFICIALS_COUNTRY,
+    name: 'HQ',
+    cssColor: '#ff0000'
+  },
+  {
+    country: OFFICIALS_COUNTRY,
+    name: 'Judges',
+    cssColor: '#3f96d4'
+  },
+  {
+    country: OFFICIALS_COUNTRY,
+    name: 'Team Supporters',
+    cssColor: '#fac32a'
+  },
   {
     name: 'evolut1on',
     cssColor: '#ff8b00',
