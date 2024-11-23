@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button } from '../ui/button';
 import { ChevronLeft, Home } from 'lucide-react';
-import { cn } from '~/lib/utils';
 import EvoLink from './evoLink';
 
 export interface BackButtonProps
