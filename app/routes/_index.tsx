@@ -39,7 +39,7 @@ const links: Array<{
   },
   {
     to: '/video/31',
-    title: 'Car-Reveal Teaser',
+    title: 'Car Teaser',
     icon: <Video />,
     image: '/assets/png/cards/carreveal.png'
   },
